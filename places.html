@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <title>Overture Places</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" crossorigin="anonymous">
+        <script src="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.js" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/pmtiles@2.7.2/dist/index.js"></script>
+        <script src="https://unpkg.com/protomaps-themes-base@1.3.1/dist/index.js"></script>
+        <style>
+            body {
+                margin: 0;
+            }
+            #map {
+                height:100%; width:100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <div id="overlay">
+        <script type="text/javascript">
+            let protocol = new pmtiles.Protocol();
+            maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.js');
+            maplibregl.addProtocol("pmtiles",protocol.tile);
+
+            const map = new maplibregl.Map({
+                hash: true,
+                container: 'map',
+                style: {
+                    version:8,
+                    glyphs:'https://cdn.protomaps.com/fonts/pbf/{fontstack}/{range}.pbf',
+                    sources: {
+                        "protomaps": {
+                            type: "vector",
+                            tiles: ["https://api.protomaps.com/tiles/v2/{z}/{x}/{y}.pbf?key=1003762824b9687f"],
+                            attribution: 'Protomaps © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+                            maxzoom: 14
+                        },
+                        "overture-pois": {
+                            type: "vector",
+                            url: "pmtiles://https://r2-public.protomaps.com/protomaps-sample-datasets/overture-pois.pmtiles"
+                        }
+                    },
+                    layers: [...protomaps_themes_base.default("protomaps","black"),
+                    {
+                        'id':'overture-pois',
+                        'type':'circle',
+                        'source':'overture-pois',
+                        'source-layer':'pois',
+                        'paint': {
+                            'circle-color':
+                                ['case',
+                                    ['==',['get','category_main'],'beauty_salon'],'#fb9a99',
+                                    ['==',['get','category_main'],'hotel'],'#33a02c',
+                                    ['==',['get','category_main'],'landmark_and_historical_building'],'#a6cee3',
+                                    ['==',['get','category_main'],'professional_services'],'#fdbf6f',
+                                    ['==',['get','category_main'],'shopping'],'#e31a1c',
+                                    ['==',['get','category_main'],'restaurant'],'#1f78b4',
+                                    ['==',['get','category_main'],'school'],'#ff7f00',
+                                    ['==',['get','category_main'],'accommodation'],'#b2df8a',
+                                    '#cab2d6'
+                                ],
+                            'circle-radius': 4,
+                            'circle-stroke-width':2,
+                            'circle-stroke-color':'black'
+                        }
+                    },
+                    {
+                        'id':'overture-pois-text',
+                        'type':'symbol',
+                        'source':'overture-pois',
+                        'source-layer':'pois',
+                        'minzoom':16,
+                        'layout': {
+                            'text-field':"{name}",
+                            'text-font':["Barlow Regular"],
+                            'text-size': 12,
+                            'text-offset':[0,1.2]
+                        },
+                        'paint': {
+                            'text-color':"white",
+                            'text-halo-width':2,
+                            'text-halo-color':'black'
+                        }
+                    }
+                    ]
+                }
+            });
+
+            map.on('mousedown', function (e) {
+                var features = map.queryRenderedFeatures(e.point);
+                features.map(feat => {
+                    console.log(feat);
+                });
+            });
+        </script>
+    </body>
+</html>
