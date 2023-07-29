@@ -2,6 +2,7 @@
     <head>
         <title>Overture Places</title>
         <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" crossorigin="anonymous">
         <script src="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.js" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/pmtiles@2.10.0-beta.0/dist/index.js"></script>
@@ -71,11 +72,11 @@
                         'type':'symbol',
                         'source':'overture-pois',
                         'source-layer':'pois',
-                        'minzoom':16,
+                        'minzoom':13,
                         'layout': {
                             'text-field':"{name}",
                             'text-font':["Barlow Regular"],
-                            'text-size': 12,
+                            'text-size': 15,
                             'text-offset':[0,1.2]
                         },
                         'paint': {
