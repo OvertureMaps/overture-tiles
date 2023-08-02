@@ -18,11 +18,27 @@
     </head>
     <body>
         <div id="map"></div>
-        <div id="overlay">
+        <div id="scroller" style="position:absolute;top:0px;left:0px;z-index:999999;color:white;padding:16px; background-color:#666">
+            Filter by confidence >= <span id="confidence">0.0</span>
+            <input type="range" min="0" max="100" step="1" value="0" onInput="rangeChanged(this.value)"></input>
+        </div>
         <script type="text/javascript">
             let protocol = new pmtiles.Protocol();
             maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.2.3/mapbox-gl-rtl-text.js');
             maplibregl.addProtocol("pmtiles",protocol.tile);
+
+            function throttle (callback, limit) {
+                var waiting = false;                      // Initially, we're not waiting
+                return function () {                      // We return a throttled function
+                    if (!waiting) {                       // If we're not waiting
+                        callback.apply(this, arguments);  // Execute users function
+                        waiting = true;                   // Prevent future invocations
+                        setTimeout(function () {          // After a period of time
+                            waiting = false;              // And allow future invocations
+                        }, limit);
+                    }
+                }
+            }
 
             const map = new maplibregl.Map({
                 hash: true,
@@ -31,16 +47,16 @@
                     version:8,
                     glyphs:'https://cdn.protomaps.com/fonts/pbf/{fontstack}/{range}.pbf',
                     sources: {
+                        "overture-pois": {
+                            type: "vector",
+                            url: "pmtiles://out.pmtiles",
+                            attribution: '© <a href="https://overturemaps.org">Overture Maps Foundation</a>'
+                        },
                         "protomaps": {
                             type: "vector",
                             tiles: ["https://api.protomaps.com/tiles/v2/{z}/{x}/{y}.pbf?key=1003762824b9687f"],
-                            attribution: 'Protomaps © <a href="https://openstreetmap.org">OpenStreetMap</a>',
+                            attribution: 'Basemap © <a href="https://openstreetmap.org">OpenStreetMap</a>',
                             maxzoom: 14
-                        },
-                        "overture-pois": {
-                            type: "vector",
-                            url: "pmtiles://https://r2-public.protomaps.com/protomaps-sample-datasets/overture-pois.pmtiles",
-                            attribution: '© <a href="https://overturemaps.org">Overture Maps Foundation</a>'
                         }
                     },
                     layers: [...protomaps_themes_base.default("protomaps","black"),
@@ -49,6 +65,7 @@
                         'type':'circle',
                         'source':'overture-pois',
                         'source-layer':'pois',
+                        'filter':[">=",["get","round(confidence, 2)"], 0.0],
                         'paint': {
                             'circle-color':
                                 ['case',
@@ -62,8 +79,20 @@
                                     ['==',['get','category_main'],'accommodation'],'#b2df8a',
                                     '#cab2d6'
                                 ],
-                            'circle-radius': 4,
-                            'circle-stroke-width':2,
+                            'circle-radius': [
+                                'interpolate',
+                                ['exponential',2],
+                                ['zoom'],
+                                0, 1, 
+                                19, 8 
+                            ],
+                            'circle-stroke-width': [
+                                'interpolate',
+                                ['exponential',2],
+                                ['zoom'],
+                                12, 0, 
+                                14, 2
+                            ],
                             'circle-stroke-color':'black'
                         }
                     },
@@ -72,15 +101,33 @@
                         'type':'symbol',
                         'source':'overture-pois',
                         'source-layer':'pois',
-                        'minzoom':13,
+                        'filter':[">",["get","round(confidence, 2)"], 0.0],
+                        'minzoom':14,
                         'layout': {
                             'text-field':"{name}",
                             'text-font':["Barlow Regular"],
-                            'text-size': 15,
+                            'text-size': [
+                                'interpolate',
+                                ['exponential',2],
+                                ['zoom'],
+                                13, 11, 
+                                16, 14 
+                            ],
                             'text-offset':[0,1.2]
                         },
                         'paint': {
-                            'text-color':"white",
+                            'text-color':
+                                ['case',
+                                    ['==',['get','category_main'],'beauty_salon'],'#fb9a99',
+                                    ['==',['get','category_main'],'hotel'],'#33a02c',
+                                    ['==',['get','category_main'],'landmark_and_historical_building'],'#a6cee3',
+                                    ['==',['get','category_main'],'professional_services'],'#fdbf6f',
+                                    ['==',['get','category_main'],'shopping'],'#e31a1c',
+                                    ['==',['get','category_main'],'restaurant'],'#1f78b4',
+                                    ['==',['get','category_main'],'school'],'#ff7f00',
+                                    ['==',['get','category_main'],'accommodation'],'#b2df8a',
+                                    '#cab2d6'
+                                ],
                             'text-halo-width':2,
                             'text-halo-color':'black'
                         }
@@ -89,11 +136,43 @@
                 }
             });
 
-            map.on('mousedown', function (e) {
-                var features = map.queryRenderedFeatures(e.point);
-                features.map(feat => {
-                    console.log(feat);
-                });
+            function rangeChangedUnthrottled(target) {
+                map.setFilter("overture-pois", [">=",["get","round(confidence, 2)"], target / 100.0]);
+                map.setFilter("overture-pois-text", [">=",["get","round(confidence, 2)"], target / 100.0]);
+                document.getElementById("confidence").innerText = target / 100.0;
+            }
+
+            let rangeChanged = throttle(rangeChangedUnthrottled, 16);
+
+            const popup = new maplibregl.Popup({
+              closeButton: true,
+              closeOnClick: false,
+              maxWidth: "none",
+            });
+
+            map.on('click', 'overture-pois-text', (e) => {
+                if (e.features.length > 0) {
+                    const feature = e.features[0];
+                    popup.setHTML(
+                        `
+                        <table style="font-size:12px">
+                            <tr>
+                                <td>name:</td>
+                                <td>${feature.properties.name}</td>
+                            </tr>
+                            <tr>
+                                <td>confidence:</td>
+                                <td>${feature.properties['round(confidence, 2)']}</td>
+                            </tr>
+                            <tr>
+                                <td>category_main:</td>
+                                <td>${feature.properties.category_main}</td>
+                            </tr>
+                        </table>
+                        `);
+                    popup.setLngLat(e.lngLat);
+                    popup.addTo(map);
+                }
             });
         </script>
     </body>
