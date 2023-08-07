@@ -20,18 +20,27 @@
             }
             #scroller {
                 z-index:999999;
-                position:absolute; top:0px ;right:0px;
-                color:white; padding:16px; background-color:#666;
-
-                @media only screen and (max-width: 600px) {
+                position:absolute;
+                top:0px;
+                right:0px;
+                color:white;
+                padding:.5rem;
+                background-color:#444;
+            }
+            @media only screen and (max-width: 600px) {
+                #scroller {
                     margin-top: 60px;
                 }
             }
             #geocoder {
                 z-index: 999999;
-                position: fixed; top: 5px; left: 5px; right: 5px;
-
-                @media only screen and (min-width: 600px) {
+                position: fixed;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+            }
+            @media only screen and (min-width: 600px) {
+                #geocoder {
                     right: auto;
                     width: 400px;
                 }
