@@ -4,9 +4,9 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.css" crossorigin="anonymous">
-        <script src="https://unpkg.com/maplibre-gl@3.2.1/dist/maplibre-gl.js" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/pmtiles@2.10.0-beta.0/dist/index.js"></script>
-        <script src="https://unpkg.com/protomaps-themes-base@1.3.1/dist/index.js"></script>
+        <script src="https://unpkg.com/protomaps-themes-base@2.0.0-alpha.1/dist/index.js"></script>
         <script
             type="module"
             src="https://s3.amazonaws.com/geocodeearth-missinglink/autocomplete-element/overture/bundle.js">
@@ -86,12 +86,12 @@
                         },
                         "protomaps": {
                             type: "vector",
-                            tiles: ["https://api.protomaps.com/tiles/v2/{z}/{x}/{y}.pbf?key=1003762824b9687f"],
+                            tiles: ["https://api.protomaps.com/tiles/v3/{z}/{x}/{y}.mvt?key=1003762824b9687f"],
                             attribution: 'Basemap © <a href="https://openstreetmap.org">OpenStreetMap</a>',
                             maxzoom: 14
                         }
                     },
-                    layers: [...protomaps_themes_base.default("protomaps","black"),
+                    layers: [...protomaps_themes_base.noLabels("protomaps","black"),
                     {
                         'id':'overture-pois',
                         'type':'circle',
@@ -163,7 +163,7 @@
                             'text-halo-width':2,
                             'text-halo-color':'black'
                         }
-                    }
+                    }, ...protomaps_themes_base.labels("protomaps","black")
                     ]
                 }
             });
