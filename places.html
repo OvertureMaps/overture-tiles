@@ -7,10 +7,6 @@
         <script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/pmtiles@2.10.0-beta.0/dist/index.js"></script>
         <script src="https://unpkg.com/protomaps-themes-base@2.0.0-alpha.1/dist/index.js"></script>
-        <script
-            type="module"
-            src="https://s3.amazonaws.com/geocodeearth-missinglink/autocomplete-element/overture/bundle.js">
-        </script>
         <style>
             body {
                 margin: 0;
@@ -26,25 +22,6 @@
                 color:white;
                 padding:.5rem;
                 background-color:#444;
-            }
-            @media only screen and (max-width: 600px) {
-                #scroller {
-                    margin-top: 60px;
-                }
-            }
-            #geocoder {
-                z-index: 999999;
-                -webkit-transform:translate3d(0,0,0);
-                position: fixed;
-                top: 5px;
-                left: 5px;
-                right: 5px;
-            }
-            @media only screen and (min-width: 600px) {
-                #geocoder {
-                    right: auto;
-                    width: 400px;
-                }
             }
         </style>
     </head>
@@ -206,29 +183,6 @@
                     popup.addTo(map);
                 }
             });
-
-            // geocoder
-            document.addEventListener("DOMContentLoaded", (event) => {
-                const el = document.querySelector('ge-autocomplete')
-
-                // 'select' event handler - when a user selects an item from the suggestions
-                el.addEventListener('select', (event) => {
-                    console.log(event.detail, event)
-                    map.jumpTo({
-                        center: event.detail.geometry.coordinates,
-                        zoom: 20
-                    });
-                })
-
-                el.addEventListener('error', (event) => {
-                    console.log(event.detail, event)
-                })
-            })
         </script>
-        <div id="geocoder"><ge-autocomplete
-            api_key="ge-743ca80c06fc413e"
-            placeholder="Search Overture POIs"
-            sources="overture"
-        ></ge-autocomplete></div>
     </body>
 </html>
