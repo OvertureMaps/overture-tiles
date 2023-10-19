@@ -7,11 +7,11 @@ LOAD spatial;
 COPY ( SELECT
       json_extract_string(names, '$.common[0].value') as name,
       json_extract_string(categories, '$.main') as category_main,
-      round(confidence,2),
+      round(confidence,2) as confidence,
       st_geomfromwkb(geometry)
       from read_parquet('overture/theme=places/type=place/*')) TO 'places.geojsonseq' WITH (FORMAT gdal, DRIVER 'geojsonseq');
   ```
-3. Feed `pois.csv` into [felt/tippecanoe](https://github.com/felt/tippecanoe):
+3. Feed the `geojsonseq` into [felt/tippecanoe](https://github.com/felt/tippecanoe):
 
 ```sh
 tippecanoe -o overture-pois.pmtiles places.geojsonseq --force --read-parallel  -j '{ "*": [ "attribute-filter", "name", [ ">=", "$zoom", 9 ] ] }' -l pois -rg --drop-densest-as-needed
