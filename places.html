@@ -28,6 +28,10 @@
     <body>
         <div id="map"></div>
         <div id="scroller">
+            <select id="releases">
+              <option value="2023-10-19-alpha.0">2023-10-19-alpha.0</option>
+              <option value="2023-07-26-alpha.0">2023-07-26-alpha.0</option>
+            </select>
             Filter by confidence >= <span id="confidence">0.0</span>
             <input type="range" min="0" max="100" step="1" value="0" onInput="rangeChanged(this.value)"></input>
         </div>
@@ -58,7 +62,7 @@
                     sources: {
                         "overture-pois": {
                             type: "vector",
-                            url: "pmtiles://https://r2-public.protomaps.com/overture-tiles/2023-07-26-alpha.0/places.pmtiles",
+                            url: "pmtiles://https://r2-public.protomaps.com/overture-tiles/2023-10-19-alpha.0/places.pmtiles",
                             attribution: '© <a href="https://overturemaps.org">Overture Maps Foundation</a>'
                         },
                         "protomaps": {
@@ -182,6 +186,10 @@
                     popup.setLngLat(e.lngLat);
                     popup.addTo(map);
                 }
+            });
+
+            document.getElementById('releases').addEventListener('change', function(e) {
+                console.log(map.getSource("overture-pois").setUrl(`pmtiles://https://r2-public.protomaps.com/overture-tiles/${e.target.value}/places.pmtiles`));
             });
         </script>
     </body>
