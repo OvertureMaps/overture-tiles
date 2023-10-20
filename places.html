@@ -58,7 +58,7 @@
                     sources: {
                         "overture-pois": {
                             type: "vector",
-                            url: "pmtiles://https://r2-public.protomaps.com/protomaps-sample-datasets/overture-pois.pmtiles",
+                            url: "pmtiles://https://r2-public.protomaps.com/overture-tiles/2023-07-26-alpha.0/places.pmtiles",
                             attribution: '© <a href="https://overturemaps.org">Overture Maps Foundation</a>'
                         },
                         "protomaps": {
@@ -74,7 +74,7 @@
                         'type':'circle',
                         'source':'overture-pois',
                         'source-layer':'pois',
-                        'filter':[">=",["get","round(confidence, 2)"], 0.0],
+                        'filter':[">=",["get","confidence"], 0.0],
                         'paint': {
                             'circle-color':
                                 ['case',
@@ -110,7 +110,7 @@
                         'type':'symbol',
                         'source':'overture-pois',
                         'source-layer':'pois',
-                        'filter':[">",["get","round(confidence, 2)"], 0.0],
+                        'filter':[">",["get","confidence"], 0.0],
                         'minzoom':14,
                         'layout': {
                             'text-field':"{name}",
@@ -146,8 +146,8 @@
             });
 
             function rangeChangedUnthrottled(target) {
-                map.setFilter("overture-pois", [">=",["get","round(confidence, 2)"], target / 100.0]);
-                map.setFilter("overture-pois-text", [">=",["get","round(confidence, 2)"], target / 100.0]);
+                map.setFilter("overture-pois", [">=",["get","confidence"], target / 100.0]);
+                map.setFilter("overture-pois-text", [">=",["get","confidence"], target / 100.0]);
                 document.getElementById("confidence").innerText = target / 100.0;
             }
 
@@ -171,7 +171,7 @@
                             </tr>
                             <tr>
                                 <td>confidence:</td>
-                                <td>${feature.properties['round(confidence, 2)']}</td>
+                                <td>${feature.properties['confidence']}</td>
                             </tr>
                             <tr>
                                 <td>category_main:</td>
