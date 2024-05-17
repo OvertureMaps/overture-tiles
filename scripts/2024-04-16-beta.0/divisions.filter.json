@@ -1,0 +1,20 @@
+{
+  "*": [
+    "all", 
+    ["attribute-filter", "id", [">=", "$zoom", 9]],
+    ["attribute-filter", "divisions", [">=", "$zoom", 9]],
+    ["attribute-filter", "version", [">=", "$zoom", 9]],
+    ["attribute-filter", "update_time", [">=", "$zoom", 9]],
+    ["attribute-filter", "sources", [">=", "$zoom", 9]],
+    ["attribute-filter", "country", [">=", "$zoom", 9]],
+    ["attribute-filter", "region", [">=", "$zoom", 9]],
+    ["attribute-filter", "hierarchies", [">=", "$zoom", 9]],
+    ["attribute-filter", "parent_division_id", [">=", "$zoom", 9]],
+    ["attribute-filter", "perspectives", [">=", "$zoom", 9]],
+    ["attribute-filter", "norms", [">=", "$zoom", 9]],
+    ["attribute-filter", "population", [">=", "$zoom", 9]],
+    ["attribute-filter", "capital_division_id", [">=", "$zoom", 9]],
+    ["attribute-filter", "wikidata", [">=", "$zoom", 9]],
+    ["attribute-filter", "names", [">=", "$zoom", 9]]
+  ]
+}
