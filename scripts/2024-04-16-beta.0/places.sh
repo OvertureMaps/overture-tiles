@@ -25,7 +25,7 @@ COPY (
             'sources', sources
         ) AS properties,
         row_number() over () as id,
-    FROM read_parquet('/srv/data/overture/2024-04-16-beta.0/theme=places/type=place/*') 
+    FROM read_parquet('/srv/data/overture/2024-04-16-beta.0/theme=places/type=place/*')
 ) TO STDOUT (FORMAT json);
-" | tippecanoe -o $1 --force -j '{ "*": [ "attribute-filter", "name", [ ">=", "$zoom", 9 ] ] }' -l places -rg --drop-densest-as-needed
+" | tippecanoe -o $1 --force -J places.filter.json -l places -rg --drop-densest-as-needed
 
