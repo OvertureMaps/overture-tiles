@@ -3,7 +3,6 @@ import com.onthegomap.planetiler.FeatureCollector;
 import com.onthegomap.planetiler.FeatureMerge;
 import com.onthegomap.planetiler.Planetiler;
 import com.onthegomap.planetiler.Profile;
-import com.onthegomap.planetiler.VectorTile;
 import com.onthegomap.planetiler.config.Arguments;
 import com.onthegomap.planetiler.config.PlanetilerConfig;
 import com.onthegomap.planetiler.geo.GeometryException;
@@ -13,10 +12,8 @@ import com.onthegomap.planetiler.util.Downloader;
 import com.onthegomap.planetiler.util.ZoomFunction;
 import com.onthegomap.planetiler.overture.Struct;
 import com.onthegomap.planetiler.overture.OvertureUrls;
-import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -77,7 +74,7 @@ public class Overture implements Profile {
   public void processFeature(SourceFeature sourceFeature, FeatureCollector features) {
     if (sourceFeature instanceof AvroParquetFeature avroFeature) {
       switch (sourceFeature.getSourceLayer()) {
-        case "buildings/building", "buildings/building_part" -> processBuilding(avroFeature, features);
+        case "base/water" -> processWater(avroFeature, features);
       }
     }
   }
@@ -92,7 +89,7 @@ public class Overture implements Profile {
 
   @Override
   public String name() {
-    return "Overture Buildings";
+    return "Overture Water";
   }
 
   @Override
@@ -110,39 +107,43 @@ public class Overture implements Profile {
     return true;
   }
 
-  private void processBuilding(AvroParquetFeature sourceFeature, FeatureCollector features) {
-    if (sourceFeature.canBePolygon()) {
-      Struct struct = sourceFeature.getStruct();
-      var commonTags = getCommonTags(struct);
-      commonTags.put("class", struct.get("class").asString());
-      commonTags.put("subtype", struct.get("subtype").asString());
-      var feature = features.polygon(sourceFeature.getSourceLayer())
-        .setMinZoom(11)
-        .setMinPixelSize(1)
-        .putAttrs(commonTags)
-        .setAttr("height", struct.get("height").asDouble())
-        .setAttr("min_height", struct.get("min_height").asDouble())
-        .setAttr("num_floors", struct.get("num_floors").asInt())
-        .setAttr("min_floor", struct.get("min_floor").asInt())
-        .setAttr("roof_shape", struct.get("roof_shape").asString())
-        .setAttr("roof_orientation", struct.get("roof_orientation").asString())
-        .setAttr("roof_direction", struct.get("roof_direction").asDouble())
-        .setAttr("eave_height", struct.get("eave_height").asDouble())
-        .setAttr("roof_material", struct.get("roof_material").asString())
-        .setAttr("facade_material", struct.get("facade_material").asString())
-        .setAttr("facade_color", struct.get("facade_color").asString())
-        .setAttr("roof_color", struct.get("roof_color").asString());
-      if (Boolean.TRUE.equals(struct.get("has_parts").asBoolean())) {
-        feature.setAttr("has_parts", true);
-      }
-      var names = getNames(struct.get("names"));
-      if (!names.isEmpty()) {
-        features.centroidIfConvex(sourceFeature.getSourceLayer())
-          .setMinZoom(14)
-          .putAttrs(names)
-          .putAttrs(commonTags);
-      }
+    private void processWater(AvroParquetFeature sourceFeature, FeatureCollector features) {
+    String clazz = sourceFeature.getStruct().get("class").asString();
+    var feature = createAnyFeature(sourceFeature, features);
+    int minzoom = switch (clazz) {
+      case "lake", "ocean", "reservoir" -> 0;
+      case "river" -> 9;
+      case "canal" -> 12;
+      case "stream" -> 13;
+      default -> 14;
+    };
+    if (sourceFeature.isPoint()) {
+      minzoom = "ocean".equals(clazz) ? 0 : Math.max(8, minzoom);
+    } else if (sourceFeature.canBePolygon()) {
+      minzoom = Math.min(minzoom, 6);
+    } else if (sourceFeature.canBeLine()) {
+      minzoom = Math.max(9, minzoom);
     }
+    feature
+      .setMinZoom(minzoom)
+      .inheritAttrFromSource("sub_type")
+      .inheritAttrFromSource("class")
+      .inheritAttrFromSource("is_salt")
+      .inheritAttrFromSource("is_intermittent")
+      .inheritAttrFromSource("wikidata")
+      .putAttrs(getCommonTags(sourceFeature.getStruct()))
+      .putAttrs(getNames(sourceFeature.getStruct().get("names")))
+      .putAttrs(getSourceTags(sourceFeature));
+    if (minzoom == 0) {
+      feature.setMinPixelSize(0);
+    }
+  }
+
+  private static FeatureCollector.Feature createAnyFeature(AvroParquetFeature sourceFeature,
+    FeatureCollector features) {
+    return sourceFeature.isPoint() ? features.point(sourceFeature.getSourceLayer()) :
+      sourceFeature.canBePolygon() ? features.polygon(sourceFeature.getSourceLayer()) :
+      features.line(sourceFeature.getSourceLayer());
   }
 
   private static Map<String, Object> getNames(Struct names) {
