@@ -46,7 +46,7 @@ public class Overture implements Profile {
     var pt = Planetiler.create(arguments)
       .addAvroParquetSource("overture", base)
       .setProfile(planetiler -> new Overture(planetiler.config()))
-      .overwriteOutput(Path.of("data", "buildings.pmtiles"));
+      .overwriteOutput(Path.of("data", "base.pmtiles"));
 
     if (arguments.getBoolean("download", "download overture files", false)) {
       downloadFiles(base, pt, release, sample);
@@ -75,6 +75,8 @@ public class Overture implements Profile {
     if (sourceFeature instanceof AvroParquetFeature avroFeature) {
       switch (sourceFeature.getSourceLayer()) {
         case "base/water" -> processWater(avroFeature, features);
+        case "base/land" -> processLand(avroFeature, features);
+        case "base/land_use" -> processLandUse(avroFeature, features);
       }
     }
   }
@@ -89,7 +91,7 @@ public class Overture implements Profile {
 
   @Override
   public String name() {
-    return "Overture Water";
+    return "Overture Base";
   }
 
   @Override
@@ -107,7 +109,45 @@ public class Overture implements Profile {
     return true;
   }
 
-    private void processWater(AvroParquetFeature sourceFeature, FeatureCollector features) {
+  private void processLand(AvroParquetFeature sourceFeature, FeatureCollector features) {
+    String clazz = sourceFeature.getStruct().get("class").asString();
+    int minzoom = switch (clazz) {
+      case "land", "glacier" -> 0;
+      default -> 7;
+    };
+    if (sourceFeature.isPoint()) {
+      minzoom = 14;
+    }
+    var feature = createAnyFeature(sourceFeature, features)
+      .setMinZoom(minzoom)
+      .inheritAttrFromSource("subType")
+      .inheritAttrFromSource("class")
+      .inheritAttrFromSource("wikidata")
+      .putAttrs(getCommonTags(sourceFeature.getStruct()))
+      .putAttrs(getNames(sourceFeature.getStruct().get("names")))
+      .putAttrs(getSourceTags(sourceFeature));
+    if (minzoom == 0) {
+      feature.setMinPixelSize(0);
+    }
+  }
+
+  private void processLandUse(AvroParquetFeature sourceFeature, FeatureCollector features) {
+    String clazz = sourceFeature.getStruct().get("class").asString();
+    createAnyFeature(sourceFeature, features)
+      .setMinZoom(sourceFeature.isPoint() ? 14 : switch (clazz) {
+        case "residential" -> 6;
+        default -> 9;
+      })
+      .inheritAttrFromSource("subType")
+      .inheritAttrFromSource("class")
+      .inheritAttrFromSource("surface")
+      .inheritAttrFromSource("wikidata")
+      .putAttrs(getCommonTags(sourceFeature.getStruct()))
+      .putAttrs(getNames(sourceFeature.getStruct().get("names")))
+      .putAttrs(getSourceTags(sourceFeature));
+  }
+
+  private void processWater(AvroParquetFeature sourceFeature, FeatureCollector features) {
     String clazz = sourceFeature.getStruct().get("class").asString();
     var feature = createAnyFeature(sourceFeature, features);
     int minzoom = switch (clazz) {
@@ -184,7 +224,7 @@ public class Overture implements Profile {
   private Map<String, Object> getCommonTags(Struct info) {
     Map<String, Object> results = HashMap.newHashMap(4);
     results.put("version", info.get("version").asInt());
-    results.put("update_time", Instant.ofEpochMilli(info.get("update_time").asLong()).toString());
+    results.put("update_time", info.get("update_time"));
     results.put("id", ZoomFunction.minZoom(14, info.get("id").asString()));
     results.put("sources", info.get("sources").asList().stream().map(d -> {
       String recordId = d.get("recordId").asString();
