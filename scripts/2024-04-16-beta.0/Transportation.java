@@ -46,7 +46,7 @@ public class Overture implements Profile {
     var pt = Planetiler.create(arguments)
       .addAvroParquetSource("overture", base)
       .setProfile(planetiler -> new Overture(planetiler.config()))
-      .overwriteOutput(Path.of("data", "base.pmtiles"));
+      .overwriteOutput(Path.of("data", "transportation.pmtiles"));
 
     if (arguments.getBoolean("download", "download overture files", false)) {
       downloadFiles(base, pt, release, sample);
