@@ -4,24 +4,30 @@ import com.onthegomap.planetiler.Profile;
 import com.onthegomap.planetiler.config.Arguments;
 import com.onthegomap.planetiler.reader.SourceFeature;
 import com.onthegomap.planetiler.util.Glob;
+import com.onthegomap.planetiler.reader.parquet.ParquetFeature;
+import org.apache.parquet.schema.MessageType;
 import java.nio.file.Path;
 import java.util.List;
 
 public class Buildings implements Profile {
 
-  private static final List<String> JSON_ATTRS = List.of("sources", "names");
-  private static final List<String> PRIMITIVE_ATTRS = List.of("id", "version", "update_time", "subtype", "class", "level", "has_parts", "height", "num_floors", "min_height", "min_floor", "facade_color", "facade_material", "roof_material", "roof_shape", "roof_direction", "roof_orientation", "roof_color", "eave_height", "building_id");
-
   @Override
   public void processFeature(SourceFeature source, FeatureCollector features) {
     String layer = source.getSourceLayer();
-    var polygon =features.polygon(layer);
 
-    for (var p : PRIMITIVE_ATTRS) {
-      polygon.inheritAttrFromSource(p);
-    }
-    for (var p : JSON_ATTRS) {
-      polygon.setAttr(p, source.getStruct(p).asJson());
+    var polygon = features.polygon(layer);
+
+    if (source instanceof ParquetFeature feature) {
+      MessageType schema = feature.parquetSchema();
+      for (var field : schema.getFields()) {
+        var name = field.getName();
+        if (name.equals("bbox") || name.equals("geometry")) continue;
+        if (field.isPrimitive()) {
+          polygon.inheritAttrFromSource(name);
+        } else {
+         polygon.setAttr(name, source.getStruct(name).asJson());
+        }
+      }
     }
   }
 
