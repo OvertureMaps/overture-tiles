@@ -22,7 +22,7 @@ public class OvertureProfile implements Profile {
     this.theme = theme;
   }
 
-  public static void addFullTags(SourceFeature source, FeatureCollector.Feature feature) {
+  protected static void addFullTags(SourceFeature source, FeatureCollector.Feature feature) {
     if (source instanceof ParquetFeature pf) {
       MessageType schema = pf.parquetSchema();
       for (var field : schema.getFields()) {
@@ -35,6 +35,13 @@ public class OvertureProfile implements Profile {
         }
       }
     }
+  }
+
+  protected static FeatureCollector.Feature createAnyFeature(SourceFeature feature,
+    FeatureCollector features) {
+    return feature.isPoint() ? features.point(feature.getSourceLayer()) :
+      feature.canBePolygon() ? features.polygon(feature.getSourceLayer()) :
+      features.line(feature.getSourceLayer());
   }
 
   @Override
@@ -68,7 +75,7 @@ public class OvertureProfile implements Profile {
   }
 
   static void run(Arguments args, Theme theme) throws Exception {
-    Path base = args.inputFile("base", "overture base directory", Path.of("data", "overture"));
+    Path base = args.inputFile("data", "overture base directory", Path.of("data", "overture"));
     var paths = Glob.of(base).resolve("theme=" + theme.name(), "*", "*.parquet").find();
     Planetiler.create(args)
       .setProfile(new OvertureProfile(theme))
