@@ -1,0 +1,18 @@
+{
+  "places": [
+    "all", 
+    ["attribute-filter", "@name", [">=", "$zoom", 14]],
+    ["attribute-filter", "id", [">=", "$zoom", 14]],
+    ["attribute-filter", "names", [">=", "$zoom", 14]],
+    ["attribute-filter", "categories", [">=", "$zoom", 14]],
+    ["attribute-filter", "websites", [">=", "$zoom", 14]],
+    ["attribute-filter", "socials", [">=", "$zoom", 14]],
+    ["attribute-filter", "emails", [">=", "$zoom", 14]],
+    ["attribute-filter", "phones", [">=", "$zoom", 14]],
+    ["attribute-filter", "brand", [">=", "$zoom", 14]],
+    ["attribute-filter", "addresses", [">=", "$zoom", 14]],
+    ["attribute-filter", "version", [">=", "$zoom", 14]],
+    ["attribute-filter", "update_time", [">=", "$zoom", 14]],
+    ["attribute-filter", "sources", [">=", "$zoom", 14]]
+  ]
+}
