@@ -8,6 +8,7 @@ public class Base implements OvertureProfile.Theme {
   public void processFeature(SourceFeature source, FeatureCollector features) {
     String layer = source.getSourceLayer();
     String clazz = source.getString("class");
+    var feature = OvertureProfile.createAnyFeature(source, features);
     if (layer.equals("infrastructure")) {
       feature.setMinZoom(13);
       OvertureProfile.addFullTags(source, feature);
@@ -30,7 +31,6 @@ public class Base implements OvertureProfile.Theme {
       feature.setMinZoom(minzoom);
       OvertureProfile.addFullTags(source, feature);
     } else if (layer.equals("land_cover")) {
-      var feature = OvertureProfile.createAnyFeature(source, features);
       var cartography = source.getStruct("cartography");
       feature.setMaxZoom(cartography.get("max_zoom").asInt());
       feature.setMinZoom(cartography.get("min_zoom").asInt());
