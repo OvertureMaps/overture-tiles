@@ -19,6 +19,9 @@ public class Base implements OvertureProfile.Theme {
       } else if (clazz.equals("land") || clazz.equals("glacier")) {
         minzoom = 0;
       }
+      if (minzoom == 0) {
+        feature.setMinPixelSize(0);
+      }
       feature.setMinZoom(minzoom);
       OvertureProfile.addFullTags(source, feature);
     } else if (layer.equals("land_use")) {
@@ -57,6 +60,9 @@ public class Base implements OvertureProfile.Theme {
         }
       }
       feature.setMinZoom(minzoom);
+      if (minzoom == 0) {
+        feature.setMinPixelSize(0);
+      }
       OvertureProfile.addFullTags(source, feature);
     }
   }
