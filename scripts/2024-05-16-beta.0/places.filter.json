@@ -1,5 +1,5 @@
 {
-  "places": [
+  "place": [
     "all", 
     ["attribute-filter", "@name", [">=", "$zoom", 14]],
     ["attribute-filter", "id", [">=", "$zoom", 14]],
