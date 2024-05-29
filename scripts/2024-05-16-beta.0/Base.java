@@ -44,7 +44,9 @@ public class Base implements OvertureProfile.Theme {
           minzoom = 8;
         }
       } else {
-        if (clazz.equals("lake") || clazz.equals("ocean") || clazz.equals("reservoir")) {
+        if (clazz.equals("ocean")) {
+          minzoom = 0;
+        } if (clazz.equals("lake") || clazz.equals("reservoir")) {
           minzoom = 4;
         } else if (clazz.equals("river")) {
           minzoom = 9;
@@ -65,7 +67,7 @@ public class Base implements OvertureProfile.Theme {
   }
 
   public static void main(String[] args) throws Exception {
-    OvertureProfile.run(Arguments.fromArgsOrConfigFile(args), new Base());
+    OvertureProfile.run(Arguments.fromArgsOrConfigFile(args).orElse(Arguments.of("maxzoom", 13)), new Base());
   }
 }
 
