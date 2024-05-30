@@ -30,8 +30,9 @@ public class OvertureProfile implements Profile {
         if (name.equals("bbox") || name.equals("geometry")) continue;
         if (field.isPrimitive()) {
           feature.inheritAttrFromSource(name);
+          feature.setAttrWithMinSize(name, source.getTag(name), 16);
         } else {
-         feature.setAttr(name, source.getStruct(name).asJson());
+         feature.setAttrWithMinSize(name, source.getStruct(name).asJson(), 16);
         }
       }
     }
