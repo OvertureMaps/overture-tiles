@@ -29,8 +29,7 @@
         <div id="map"></div>
         <div id="scroller">
             <select id="releases">
-              <option value="2023-10-19-alpha.0">2023-10-19-alpha.0</option>
-              <option value="2023-07-26-alpha.0">2023-07-26-alpha.0</option>
+              <option value="2024-05-16-beta.0">2024-05-16-beta.0</option>
             </select>
             Filter by confidence >= <span id="confidence">0.0</span>
             <input type="range" min="0" max="100" step="1" value="0" onInput="rangeChanged(this.value)"></input>
@@ -60,9 +59,9 @@
                     version:8,
                     glyphs:'https://cdn.protomaps.com/fonts/pbf/{fontstack}/{range}.pbf',
                     sources: {
-                        "overture-pois": {
+                        "overture-places": {
                             type: "vector",
-                            url: "pmtiles://https://r2-public.protomaps.com/overture-tiles/2023-10-19-alpha.0/places.pmtiles",
+                            url: "pmtiles://https://data.source.coop/protomaps/overture/2024-05-16-beta.0/places.pmtiles",
                             attribution: '© <a href="https://overturemaps.org">Overture Maps Foundation</a>'
                         },
                         "protomaps": {
@@ -74,22 +73,22 @@
                     },
                     layers: [...protomaps_themes_base.noLabels("protomaps","black"),
                     {
-                        'id':'overture-pois',
+                        'id':'places',
                         'type':'circle',
-                        'source':'overture-pois',
-                        'source-layer':'pois',
+                        'source':'overture-places',
+                        'source-layer':'place',
                         'filter':[">=",["get","confidence"], 0.0],
                         'paint': {
                             'circle-color':
                                 ['case',
-                                    ['==',['get','category_main'],'beauty_salon'],'#fb9a99',
-                                    ['==',['get','category_main'],'hotel'],'#33a02c',
-                                    ['==',['get','category_main'],'landmark_and_historical_building'],'#a6cee3',
-                                    ['==',['get','category_main'],'professional_services'],'#fdbf6f',
-                                    ['==',['get','category_main'],'shopping'],'#e31a1c',
-                                    ['==',['get','category_main'],'restaurant'],'#1f78b4',
-                                    ['==',['get','category_main'],'school'],'#ff7f00',
-                                    ['==',['get','category_main'],'accommodation'],'#b2df8a',
+                                    ['==',['get','@category'],'beauty_salon'],'#fb9a99',
+                                    ['==',['get','@category'],'hotel'],'#33a02c',
+                                    ['==',['get','@category'],'landmark_and_historical_building'],'#a6cee3',
+                                    ['==',['get','@category'],'professional_services'],'#fdbf6f',
+                                    ['==',['get','@category'],'shopping'],'#e31a1c',
+                                    ['==',['get','@category'],'restaurant'],'#1f78b4',
+                                    ['==',['get','@category'],'school'],'#ff7f00',
+                                    ['==',['get','@category'],'accommodation'],'#b2df8a',
                                     '#cab2d6'
                                 ],
                             'circle-radius': [
@@ -110,14 +109,14 @@
                         }
                     },
                     {
-                        'id':'overture-pois-text',
+                        'id':'places-text',
                         'type':'symbol',
-                        'source':'overture-pois',
-                        'source-layer':'pois',
+                        'source':'overture-places',
+                        'source-layer':'place',
                         'filter':[">",["get","confidence"], 0.0],
                         'minzoom':14,
                         'layout': {
-                            'text-field':"{name}",
+                            'text-field':"{@name}",
                             'text-font':["Barlow Regular"],
                             'text-size': [
                                 'interpolate',
@@ -131,14 +130,14 @@
                         'paint': {
                             'text-color':
                                 ['case',
-                                    ['==',['get','category_main'],'beauty_salon'],'#fb9a99',
-                                    ['==',['get','category_main'],'hotel'],'#33a02c',
-                                    ['==',['get','category_main'],'landmark_and_historical_building'],'#a6cee3',
-                                    ['==',['get','category_main'],'professional_services'],'#fdbf6f',
-                                    ['==',['get','category_main'],'shopping'],'#e31a1c',
-                                    ['==',['get','category_main'],'restaurant'],'#1f78b4',
-                                    ['==',['get','category_main'],'school'],'#ff7f00',
-                                    ['==',['get','category_main'],'accommodation'],'#b2df8a',
+                                    ['==',['get','@category'],'beauty_salon'],'#fb9a99',
+                                    ['==',['get','@category'],'hotel'],'#33a02c',
+                                    ['==',['get','@category'],'landmark_and_historical_building'],'#a6cee3',
+                                    ['==',['get','@category'],'professional_services'],'#fdbf6f',
+                                    ['==',['get','@category'],'shopping'],'#e31a1c',
+                                    ['==',['get','@category'],'restaurant'],'#1f78b4',
+                                    ['==',['get','@category'],'school'],'#ff7f00',
+                                    ['==',['get','@category'],'accommodation'],'#b2df8a',
                                     '#cab2d6'
                                 ],
                             'text-halo-width':2,
@@ -150,8 +149,8 @@
             });
 
             function rangeChangedUnthrottled(target) {
-                map.setFilter("overture-pois", [">=",["get","confidence"], target / 100.0]);
-                map.setFilter("overture-pois-text", [">=",["get","confidence"], target / 100.0]);
+                map.setFilter("places", [">=",["get","confidence"], target / 100.0]);
+                map.setFilter("places-text", [">=",["get","confidence"], target / 100.0]);
                 document.getElementById("confidence").innerText = target / 100.0;
             }
 
@@ -163,7 +162,7 @@
               maxWidth: "none",
             });
 
-            map.on('click', 'overture-pois-text', (e) => {
+            map.on('click', 'places-text', (e) => {
                 if (e.features.length > 0) {
                     const feature = e.features[0];
                     popup.setHTML(
@@ -171,7 +170,7 @@
                         <table style="font-size:12px">
                             <tr>
                                 <td>name:</td>
-                                <td>${feature.properties.name}</td>
+                                <td>${feature.properties['@name']}</td>
                             </tr>
                             <tr>
                                 <td>confidence:</td>
@@ -179,7 +178,7 @@
                             </tr>
                             <tr>
                                 <td>category_main:</td>
-                                <td>${feature.properties.category_main}</td>
+                                <td>${feature.properties['@category']}</td>
                             </tr>
                         </table>
                         `);
@@ -189,7 +188,7 @@
             });
 
             document.getElementById('releases').addEventListener('change', function(e) {
-                console.log(map.getSource("overture-pois").setUrl(`pmtiles://https://r2-public.protomaps.com/overture-tiles/${e.target.value}/places.pmtiles`));
+                console.log(map.getSource("overture-places").setUrl(`pmtiles://https://data.source.coop/protomaps/overture/${e.target.value}/places.pmtiles`));
             });
         </script>
     </body>
