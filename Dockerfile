@@ -6,12 +6,12 @@ RUN yum update -y && yum install -y tar make gzip gcc-c++ sqlite-devel zlib-deve
 
 # Build tippecanoe for creating tilesets for small themes.
 
-RUN curl -L https://github.com/felt/tippecanoe/archive/refs/tags/2.53.0.tar.gz | tar xz -C /opt/
-WORKDIR /opt/tippecanoe-2.53.0
+RUN curl -L https://github.com/felt/tippecanoe/archive/refs/tags/2.55.0.tar.gz | tar xz -C /opt/
+WORKDIR /opt/tippecanoe-2.55.0
 
 RUN make && make install
 
-RUN rm -r /opt/tippecanoe-2.53.0
+RUN rm -r /opt/tippecanoe-2.55.0
 
 # download and install duckdb for reading Overture Parquet files.
 
