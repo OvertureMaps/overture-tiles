@@ -23,7 +23,7 @@ COPY (
             'sources', sources
         ) AS properties,
         row_number() over () as id,
-    FROM read_parquet('/srv/data/overture/2024-05-16-beta.0/theme=places/type=place/*')
+    FROM read_parquet('/srv/data/overture/2024-06-13-beta.0/theme=places/type=place/*')
 ) TO STDOUT (FORMAT json);
 " | tippecanoe -o $1 --force -J places.filter.json -l place -rg --drop-densest-as-needed --extend-zooms-if-still-dropping
 

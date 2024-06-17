@@ -21,7 +21,7 @@ COPY (
             'sources', sources
         ) AS properties,
         row_number() over () as id
-    FROM read_parquet('/srv/data/overture/2024-05-16-beta.0/theme=divisions/type=boundary/*'))
+    FROM read_parquet('/srv/data/overture/2024-06-13-beta.0/theme=divisions/type=boundary/*'))
     UNION ALL
     (SELECT
     'Feature' AS type,
@@ -50,7 +50,7 @@ COPY (
         'sources', sources
     ) AS properties,
     row_number() over () as id
-FROM read_parquet('/srv/data/overture/2024-05-16-beta.0/theme=divisions/type=division/*'))
+FROM read_parquet('/srv/data/overture/2024-06-13-beta.0/theme=divisions/type=division/*'))
     UNION ALL
     (SELECT
         'Feature' AS type,
@@ -72,7 +72,7 @@ FROM read_parquet('/srv/data/overture/2024-05-16-beta.0/theme=divisions/type=div
             'sources', sources
         ) AS properties,
         row_number() over () as id
-    FROM read_parquet('/srv/data/overture/2024-05-16-beta.0/theme=divisions/type=division_area/*'))
+    FROM read_parquet('/srv/data/overture/2024-06-13-beta.0/theme=divisions/type=division_area/*'))
     ) TO STDOUT (FORMAT json);
 " | tippecanoe -o $1 -J divisions.filter.json --force --drop-densest-as-needed -z 12
 
