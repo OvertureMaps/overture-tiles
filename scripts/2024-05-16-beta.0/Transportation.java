@@ -12,7 +12,7 @@ public class Transportation implements OvertureProfile.Theme {
     if (layer.equals("connector")) {
       var point = features.point(layer);
       point.setMinZoom(13);
-      OvertureProfile.addFullTags(source, point);
+      OvertureProfile.addFullTags(source, point, 14);
     } else if (layer.equals("segment")) {
       int minzoom = switch (subtype) {
         case "road" -> switch (clazz) {
@@ -32,7 +32,7 @@ public class Transportation implements OvertureProfile.Theme {
       var line = features.line(layer);
       line.setMinZoom(minzoom);
       line.setMinPixelSize(0);
-      OvertureProfile.addFullTags(source, line);
+      OvertureProfile.addFullTags(source, line, 14);
     }
   }
 

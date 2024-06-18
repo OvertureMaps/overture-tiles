@@ -2,7 +2,9 @@ import com.onthegomap.planetiler.FeatureCollector;
 import com.onthegomap.planetiler.config.Arguments;
 import com.onthegomap.planetiler.reader.SourceFeature;
 
+
 public class Base implements OvertureProfile.Theme {
+  final static int MAXZOOM = 13;
 
   @Override
   public void processFeature(SourceFeature source, FeatureCollector features) {
@@ -11,7 +13,7 @@ public class Base implements OvertureProfile.Theme {
     var feature = OvertureProfile.createAnyFeature(source, features);
     if (layer.equals("infrastructure")) {
       feature.setMinZoom(13);
-      OvertureProfile.addFullTags(source, feature);
+      OvertureProfile.addFullTags(source, feature, MAXZOOM);
     } else if (layer.equals("land")) {
       int minzoom = 7;
       if (source.isPoint()) {
@@ -23,7 +25,7 @@ public class Base implements OvertureProfile.Theme {
         feature.setMinPixelSize(0);
       }
       feature.setMinZoom(minzoom);
-      OvertureProfile.addFullTags(source, feature);
+      OvertureProfile.addFullTags(source, feature, MAXZOOM);
     } else if (layer.equals("land_use")) {
       int minzoom = 9;
       if (source.isPoint()) {
@@ -32,12 +34,12 @@ public class Base implements OvertureProfile.Theme {
         minzoom = 6;
       }
       feature.setMinZoom(minzoom);
-      OvertureProfile.addFullTags(source, feature);
+      OvertureProfile.addFullTags(source, feature, MAXZOOM);
     } else if (layer.equals("land_cover")) {
       var cartography = source.getStruct("cartography");
       feature.setMaxZoom(cartography.get("max_zoom").asInt());
       feature.setMinZoom(cartography.get("min_zoom").asInt());
-      OvertureProfile.addFullTags(source, feature);
+      OvertureProfile.addFullTags(source, feature, MAXZOOM);
     } else if (layer.equals("water")) {
       int minzoom = 13;
       if (source.isPoint()) {
@@ -63,7 +65,7 @@ public class Base implements OvertureProfile.Theme {
       if (minzoom == 0) {
         feature.setMinPixelSize(0);
       }
-      OvertureProfile.addFullTags(source, feature);
+      OvertureProfile.addFullTags(source, feature, MAXZOOM);
     }
   }
 
@@ -73,7 +75,7 @@ public class Base implements OvertureProfile.Theme {
   }
 
   public static void main(String[] args) throws Exception {
-    OvertureProfile.run(Arguments.fromArgsOrConfigFile(args).orElse(Arguments.of("maxzoom", 13)), new Base());
+    OvertureProfile.run(Arguments.fromArgsOrConfigFile(args).orElse(Arguments.of("maxzoom", MAXZOOM)), new Base());
   }
 }
 

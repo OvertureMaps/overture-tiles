@@ -22,7 +22,7 @@ public class OvertureProfile implements Profile {
     this.theme = theme;
   }
 
-  protected static void addFullTags(SourceFeature source, FeatureCollector.Feature feature) {
+  protected static void addFullTags(SourceFeature source, FeatureCollector.Feature feature, int minZoomToShowAlways) {
     if (source instanceof ParquetFeature pf) {
       MessageType schema = pf.parquetSchema();
       for (var field : schema.getFields()) {
@@ -30,9 +30,9 @@ public class OvertureProfile implements Profile {
         if (name.equals("bbox") || name.equals("geometry")) continue;
         if (field.isPrimitive()) {
           feature.inheritAttrFromSource(name);
-          feature.setAttrWithMinSize(name, source.getTag(name), 16);
+          feature.setAttrWithMinSize(name, source.getTag(name), 16, 0, minZoomToShowAlways);
         } else {
-         feature.setAttrWithMinSize(name, source.getStruct(name).asJson(), 16);
+         feature.setAttrWithMinSize(name, source.getStruct(name).asJson(), 16, 0, minZoomToShowAlways);
         }
       }
     }

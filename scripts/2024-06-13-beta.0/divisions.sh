@@ -42,7 +42,7 @@ COPY (
         'perspectives', perspectives,
         'norms', norms,
         'population', population,
-        'capital_division_id', capital_division_id,
+        'capital_division_ids', capital_division_ids,
         'wikidata', wikidata,
         'names', names,
         'version', version,

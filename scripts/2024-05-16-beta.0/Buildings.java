@@ -11,7 +11,7 @@ public class Buildings implements OvertureProfile.Theme {
   public void processFeature(SourceFeature source, FeatureCollector features) {
     String layer = source.getSourceLayer();
     var polygon = features.polygon(layer);
-    OvertureProfile.addFullTags(source, polygon);
+    OvertureProfile.addFullTags(source, polygon, 14);
   }
 
   @Override
