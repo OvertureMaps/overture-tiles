@@ -9,12 +9,13 @@ export class HelloCdkStack extends cdk.Stack {
 
     const userData = ec2.UserData.forLinux();
     userData.addCommands(
+      "#!/bin/bash",
       "volume_name=`lsblk -x SIZE -o NAME | tail -n 1`",
       "mkfs -t ext4 /dev/$volume_name",
       "mkdir /docker",
       "mount /dev/$volume_name /docker",
       "echo '{\"data-root\": \"/docker\"}' > /etc/docker/daemon.json",
-      "systemctl restart docker --no-block"
+      "systemctl restart docker"
     );
 
     const multipartUserData = new ec2.MultipartUserData();
