@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { aws_s3 as s3, aws_ec2 as ec2 } from "aws-cdk-lib";
 import { aws_batch as batch, aws_ecs as ecs } from "aws-cdk-lib";
+import { aws_iam as iam } from "aws-cdk-lib";
 
 export class HelloCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -26,6 +27,17 @@ export class HelloCdkStack extends cdk.Stack {
       userData: multipartUserData,
     });
 
+    const bucket = new s3.Bucket(this, 'MyBucket');
+
+    const role = new iam.Role(this, 'S3WriteRole', {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com')
+    });
+
+    role.addToPolicy(new iam.PolicyStatement({
+      actions: ['s3:PutObject', 's3:PutObjectAcl'],
+      resources: [`${bucket.bucketArn}/*`],
+    }));
+
     const ecsJob = new batch.EcsJobDefinition(this, "JobDefn", {
       container: new batch.EcsEc2ContainerDefinition(this, "containerDefn", {
         image: ecs.ContainerImage.fromRegistry(
@@ -33,7 +45,9 @@ export class HelloCdkStack extends cdk.Stack {
         ),
         memory: cdk.Size.mebibytes(512),
         cpu: 1,
-        command: ["aws","s3","sync","--region","us-west-2","--no-sign-request","s3://overturemaps-us-west-2/release/2024-06-13-beta.0/theme=transportation", "transportation"]
+        // command: ["aws","s3","sync","--region","us-west-2","--no-sign-request","s3://overturemaps-us-west-2/release/2024-06-13-beta.0/theme=places", "places"]
+        command: ["aws", "s3", "cp", "/scripts/2024-06-13-beta.0/places.sh", `s3://${bucket.bucketName}` ],
+        jobRole: role
       }),
     });
 
