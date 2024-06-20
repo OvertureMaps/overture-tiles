@@ -45,8 +45,7 @@ export class HelloCdkStack extends cdk.Stack {
         ),
         memory: cdk.Size.mebibytes(512),
         cpu: 1,
-        // command: ["aws","s3","sync","--region","us-west-2","--no-sign-request","s3://overturemaps-us-west-2/release/2024-06-13-beta.0/theme=places", "places"]
-        command: ["aws", "s3", "cp", "/scripts/2024-06-13-beta.0/places.sh", `s3://${bucket.bucketName}` ],
+        command: [bucket.bucketName],
         jobRole: role
       }),
     });
