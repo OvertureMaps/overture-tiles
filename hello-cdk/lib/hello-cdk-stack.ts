@@ -14,7 +14,7 @@ export class HelloCdkStack extends cdk.Stack {
     multipartUserData.addPart(ec2.MultipartBody.fromUserData(userData));
 
     const launchTemplate = new ec2.LaunchTemplate(this, "LaunchTemplate", {
-      machineImage: ec2.MachineImage.latestAmazonLinux2023(),
+      machineImage: ecs.EcsOptimizedImage.amazonLinux2023(),
       userData: multipartUserData,
     });
 
@@ -23,14 +23,14 @@ export class HelloCdkStack extends cdk.Stack {
         image: ecs.ContainerImage.fromRegistry(
           "protomaps/go-pmtiles:latest",
         ),
-        memory: cdk.Size.mebibytes(512),
+        memory: cdk.Size.mebibytes(256),
         cpu: 1,
-        command: ["show","https://data.source.coop/protomaps/openstreetmap/tiles/v3.pmtiles"]
+        command: ["show","https://data.source.coop/protomaps/openstreetmap/tiles/v3.pmtiles"],
       }),
     });
 
     const vpc = new ec2.Vpc(this, 'TheVPC', {
-      natGateways: 0
+      availabilityZones: ["us-west-1a"]
     });
 
     const queue = new batch.JobQueue(this, "JobQueue", {
@@ -41,6 +41,7 @@ export class HelloCdkStack extends cdk.Stack {
             "managedEc2CE",
             {
               vpc: vpc,
+              vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
               launchTemplate: launchTemplate
             },
           ),
