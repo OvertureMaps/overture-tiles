@@ -43,8 +43,8 @@ export class HelloCdkStack extends cdk.Stack {
         image: ecs.ContainerImage.fromRegistry(
           "protomaps/overture-tiles:latest",
         ),
-        memory: cdk.Size.gibibytes(2),
-        cpu: 2,
+        memory: cdk.Size.gibibytes(16),
+        cpu: 8,
         command: [bucket.bucketName],
         jobRole: role
       }),
@@ -66,7 +66,7 @@ export class HelloCdkStack extends cdk.Stack {
               launchTemplate: launchTemplate,
               replaceComputeEnvironment: true,
               allocationStrategy: batch.AllocationStrategy.BEST_FIT,
-              instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.C6GD, ec2.InstanceSize.LARGE)],
+              instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.C7GD, ec2.InstanceSize.XLARGE2)],
               useOptimalInstanceClasses: false
             },
           ),
