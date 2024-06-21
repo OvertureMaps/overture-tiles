@@ -43,8 +43,8 @@ export class HelloCdkStack extends cdk.Stack {
         image: ecs.ContainerImage.fromRegistry(
           "protomaps/overture-tiles:latest",
         ),
-        memory: cdk.Size.mebibytes(512),
-        cpu: 1,
+        memory: cdk.Size.gibibytes(2),
+        cpu: 2,
         command: [bucket.bucketName],
         jobRole: role
       }),

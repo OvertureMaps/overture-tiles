@@ -27,4 +27,4 @@ RUN curl -L https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip -o awscliv
 
 COPY scripts /scripts
 
-ENTRYPOINT ["sh","/scripts/2024-06-13-beta.0/places_full.sh"]
+ENTRYPOINT ["bash","/scripts/2024-06-13-beta.0/places_full.sh"]
