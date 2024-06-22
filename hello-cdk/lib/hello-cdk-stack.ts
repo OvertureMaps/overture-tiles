@@ -4,6 +4,8 @@ import { aws_s3 as s3, aws_ec2 as ec2 } from "aws-cdk-lib";
 import { aws_batch as batch, aws_ecs as ecs } from "aws-cdk-lib";
 import { aws_iam as iam } from "aws-cdk-lib";
 
+const ID = "OvertureTiles"
+
 export class HelloCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -22,14 +24,14 @@ export class HelloCdkStack extends cdk.Stack {
     const multipartUserData = new ec2.MultipartUserData();
     multipartUserData.addPart(ec2.MultipartBody.fromUserData(userData));
 
-    const launchTemplate = new ec2.LaunchTemplate(this, "LaunchTemplate", {
+    const launchTemplate = new ec2.LaunchTemplate(this, `${ID}LaunchTemplate`, {
       machineImage: ecs.EcsOptimizedImage.amazonLinux2023(ecs.AmiHardwareType.ARM),
       userData: multipartUserData,
     });
 
-    const bucket = new s3.Bucket(this, 'MyBucket');
+    const bucket = new s3.Bucket(this, `${ID}Bucket`);
 
-    const role = new iam.Role(this, 'S3WriteRole', {
+    const role = new iam.Role(this, `${ID}WriteRole`, {
       assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com')
     });
 
@@ -38,8 +40,8 @@ export class HelloCdkStack extends cdk.Stack {
       resources: [`${bucket.bucketArn}/*`],
     }));
 
-    const ecsJob = new batch.EcsJobDefinition(this, "JobDefn", {
-      container: new batch.EcsEc2ContainerDefinition(this, "containerDefn", {
+    const ecsJob = new batch.EcsJobDefinition(this, `${ID}Job`, {
+      container: new batch.EcsEc2ContainerDefinition(this, `${ID}Container`, {
         image: ecs.ContainerImage.fromRegistry(
           "protomaps/overture-tiles:latest",
         ),
@@ -50,18 +52,19 @@ export class HelloCdkStack extends cdk.Stack {
       }),
     });
 
-    const vpc = new ec2.Vpc(this, 'TheVPC', {
+    const vpc = new ec2.Vpc(this, `${ID}Vpc`, {
       availabilityZones: ["us-west-1a"]
     });
 
-    const queue = new batch.JobQueue(this, "JobQueue", {
+    const queue = new batch.JobQueue(this, `${ID}Queue`, {
       computeEnvironments: [
         {
           computeEnvironment: new batch.ManagedEc2EcsComputeEnvironment(
             this,
-            "managedEc2CE",
+            `${ID}ComputeEnvironment`,
             {
               vpc: vpc,
+              spot: false,
               vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
               launchTemplate: launchTemplate,
               replaceComputeEnvironment: true,
