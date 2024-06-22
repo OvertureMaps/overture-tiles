@@ -32,5 +32,6 @@ RUN curl -L https://github.com/onthegomap/planetiler/releases/download/v0.8.0/pl
 
 COPY scripts /scripts
 COPY profiles /profiles
+COPY run.sh /run.sh
 
-ENTRYPOINT ["bash","/scripts/2024-06-13-beta.0/places_full.sh"]
+ENTRYPOINT ["bash","/run.sh"]

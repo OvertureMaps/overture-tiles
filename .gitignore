@@ -1,2 +1,4 @@
 *.pmtiles
 *.parquet
+data
+*.jar
