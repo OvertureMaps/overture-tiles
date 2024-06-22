@@ -40,23 +40,25 @@ export class HelloCdkStack extends cdk.Stack {
       resources: [`${bucket.bucketArn}/*`],
     }));
 
-    const ecsJob = new batch.EcsJobDefinition(this, `${ID}Job`, {
-      container: new batch.EcsEc2ContainerDefinition(this, `${ID}Container`, {
-        image: ecs.ContainerImage.fromRegistry(
-          "protomaps/overture-tiles:latest",
-        ),
-        memory: cdk.Size.gibibytes(60),
-        cpu: 30,
-        command: [bucket.bucketName],
-        jobRole: role
-      }),
-    });
+    for (let theme of ["places","divisions","buildings","transportation","base"]) {
+      new batch.EcsJobDefinition(this, `${ID}Job_${theme}`, {
+        container: new batch.EcsEc2ContainerDefinition(this, `${ID}Container_${theme}`, {
+          image: ecs.ContainerImage.fromRegistry(
+            "protomaps/overture-tiles:latest",
+          ),
+          memory: cdk.Size.gibibytes(60),
+          cpu: 30,
+          command: [bucket.bucketName,theme],
+          jobRole: role
+        }),
+      });
+    }
 
     const vpc = new ec2.Vpc(this, `${ID}Vpc`, {
       availabilityZones: ["us-west-1a"]
     });
 
-    const queue = new batch.JobQueue(this, `${ID}Queue`, {
+    new batch.JobQueue(this, `${ID}Queue`, {
       computeEnvironments: [
         {
           computeEnvironment: new batch.ManagedEc2EcsComputeEnvironment(
