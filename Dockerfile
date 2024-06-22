@@ -11,6 +11,7 @@ WORKDIR /opt/tippecanoe-2.55.0
 
 RUN make && make install
 
+WORKDIR /
 RUN rm -r /opt/tippecanoe-2.55.0
 
 # download and install duckdb for reading Overture Parquet files.
@@ -23,8 +24,13 @@ RUN duckdb -c "install httpfs; install spatial;"
 
 RUN curl -L https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip -o awscliv2.zip && unzip awscliv2.zip && ./aws/install && rm awscliv2.zip && rm -r ./aws
 
+# Download planetiler JAR.
+
+RUN curl -L https://github.com/onthegomap/planetiler/releases/download/v0.8.0/planetiler.jar -o planetiler.jar
+
 # copy current scripts into image.
 
 COPY scripts /scripts
+COPY profiles /profiles
 
 ENTRYPOINT ["bash","/scripts/2024-06-13-beta.0/places_full.sh"]
