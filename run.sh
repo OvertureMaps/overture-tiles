@@ -16,4 +16,3 @@ else
   java -cp planetiler.jar /profiles/$className.java --data=/data
   aws s3 cp --no-progress data/$THEME.pmtiles s3://$BUCKET
 fi
-

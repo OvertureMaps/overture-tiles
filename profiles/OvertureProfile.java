@@ -29,7 +29,12 @@ public class OvertureProfile implements Profile {
             MessageType schema = pf.parquetSchema();
             for (var field : schema.getFields()) {
                 var name = field.getName();
+                if (!pf.hasTag(name)) continue;
                 if (name.equals("bbox") || name.equals("geometry")) continue;
+                if (name.equals("names")) {
+                    var primaryName = pf.getStruct("names").get("primary");
+                    feature.setAttrWithMinSize("@name", primaryName, 16, 0, minZoomToShowAlways);
+                }
                 if (field.isPrimitive()) {
                     feature.inheritAttrFromSource(name);
                     feature.setAttrWithMinSize(name, source.getTag(name), 16, 0, minZoomToShowAlways);
