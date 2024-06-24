@@ -4,7 +4,7 @@ import { aws_s3 as s3, aws_ec2 as ec2 } from "aws-cdk-lib";
 import { aws_batch as batch, aws_ecs as ecs } from "aws-cdk-lib";
 import { aws_iam as iam } from "aws-cdk-lib";
 
-const ID = "OvertureTiles"
+const ID = "OvertureTiles";
 
 export class HelloCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -17,45 +17,73 @@ export class HelloCdkStack extends cdk.Stack {
       "mkfs -t ext4 /dev/$volume_name",
       "mkdir /docker",
       "mount /dev/$volume_name /docker",
-      "echo '{\"data-root\": \"/docker\"}' > /etc/docker/daemon.json",
-      "systemctl restart docker"
+      'echo \'{"data-root": "/docker"}\' > /etc/docker/daemon.json',
+      "systemctl restart docker",
     );
 
     const multipartUserData = new ec2.MultipartUserData();
     multipartUserData.addPart(ec2.MultipartBody.fromUserData(userData));
 
     const launchTemplate = new ec2.LaunchTemplate(this, `${ID}LaunchTemplate`, {
-      machineImage: ecs.EcsOptimizedImage.amazonLinux2023(ecs.AmiHardwareType.ARM),
+      machineImage: ecs.EcsOptimizedImage.amazonLinux2023(
+        ecs.AmiHardwareType.ARM,
+      ),
       userData: multipartUserData,
     });
 
-    const bucket = new s3.Bucket(this, `${ID}Bucket`);
-
-    const role = new iam.Role(this, `${ID}WriteRole`, {
-      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com')
+    const bucket = new s3.Bucket(this, `${ID}Bucket`, {
+      blockPublicAccess: new s3.BlockPublicAccess({
+        blockPublicAcls: false,
+        blockPublicPolicy: false,
+        ignorePublicAcls: false,
+        restrictPublicBuckets: false,
+      }),
+      publicReadAccess: true,
+      cors: [
+        {
+          allowedMethods: [s3.HttpMethods.GET],
+          allowedOrigins: ["*"],
+        },
+      ],
     });
 
-    role.addToPolicy(new iam.PolicyStatement({
-      actions: ['s3:PutObject', 's3:PutObjectAcl'],
-      resources: [`${bucket.bucketArn}/*`],
-    }));
+    const role = new iam.Role(this, `${ID}WriteRole`, {
+      assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
+    });
 
-    for (let theme of ["places","divisions","buildings","transportation","base"]) {
+    role.addToPolicy(
+      new iam.PolicyStatement({
+        actions: ["s3:PutObject", "s3:PutObjectAcl"],
+        resources: [`${bucket.bucketArn}/*`],
+      }),
+    );
+
+    for (let theme of [
+      "places",
+      "divisions",
+      "buildings",
+      "transportation",
+      "base",
+    ]) {
       new batch.EcsJobDefinition(this, `${ID}Job_${theme}`, {
-        container: new batch.EcsEc2ContainerDefinition(this, `${ID}Container_${theme}`, {
-          image: ecs.ContainerImage.fromRegistry(
-            "protomaps/overture-tiles:latest",
-          ),
-          memory: cdk.Size.gibibytes(60),
-          cpu: 30,
-          command: [bucket.bucketName,theme],
-          jobRole: role
-        }),
+        container: new batch.EcsEc2ContainerDefinition(
+          this,
+          `${ID}Container_${theme}`,
+          {
+            image: ecs.ContainerImage.fromRegistry(
+              "protomaps/overture-tiles:latest",
+            ),
+            memory: cdk.Size.gibibytes(60),
+            cpu: 30,
+            command: [bucket.bucketName, theme],
+            jobRole: role,
+          },
+        ),
       });
     }
 
     const vpc = new ec2.Vpc(this, `${ID}Vpc`, {
-      availabilityZones: ["us-west-1a"]
+      maxAzs: 1
     });
 
     new batch.JobQueue(this, `${ID}Queue`, {
@@ -71,13 +99,18 @@ export class HelloCdkStack extends cdk.Stack {
               launchTemplate: launchTemplate,
               replaceComputeEnvironment: true,
               allocationStrategy: batch.AllocationStrategy.BEST_FIT,
-              instanceTypes: [ec2.InstanceType.of(ec2.InstanceClass.C7GD, ec2.InstanceSize.XLARGE8)],
-              useOptimalInstanceClasses: false
+              instanceTypes: [
+                ec2.InstanceType.of(
+                  ec2.InstanceClass.C7GD,
+                  ec2.InstanceSize.XLARGE8,
+                ),
+              ],
+              useOptimalInstanceClasses: false,
             },
           ),
           order: 1,
         },
-      ]
+      ],
     });
   }
 }
