@@ -2,7 +2,7 @@ set -e
 set -u
 set -x
 
-RELEASE="2024-06-13-beta.0"
+RELEASE="2024-06-13-beta.1"
 BUCKET=$1
 THEME=$2
 
