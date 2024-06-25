@@ -15,9 +15,9 @@ aws s3 sync --no-progress --region us-west-2 --no-sign-request s3://overturemaps
 
 if [ "$THEME" == "places" ] || [ "$THEME" == "divisions" ]; then
   bash scripts/$RELEASE_TILESET/$THEME.sh $THEME.pmtiles
-  aws s3 cp --no-progress $THEME.pmtiles s3://$BUCKET/$RELEASE_TILESET
+  aws s3 cp --no-progress $THEME.pmtiles s3://$BUCKET/$RELEASE_TILESET/$THEME.pmtiles
 else
   className="${THEME^}"
   java -cp planetiler.jar /profiles/$className.java --data=/data
-  aws s3 cp --no-progress data/$THEME.pmtiles s3://$BUCKET/$RELEASE_TILESET
+  aws s3 cp --no-progress data/$THEME.pmtiles s3://$BUCKET/$RELEASE_TILESET/$THEME.pmtiles
 fi
