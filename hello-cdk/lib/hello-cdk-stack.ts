@@ -1,6 +1,10 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { aws_s3 as s3, aws_ec2 as ec2 } from "aws-cdk-lib";
+import {
+  aws_cloudfront as cloudfront,
+  aws_cloudfront_origins as origins,
+} from "aws-cdk-lib";
 import { aws_batch as batch, aws_ecs as ecs } from "aws-cdk-lib";
 import { aws_iam as iam } from "aws-cdk-lib";
 
@@ -47,6 +51,12 @@ export class HelloCdkStack extends cdk.Stack {
       ],
     });
 
+    new cloudfront.Distribution(this, `${ID}Distribution`, {
+      defaultBehavior: {
+        origin: new origins.S3Origin(bucket),
+      },
+    });
+
     const role = new iam.Role(this, `${ID}WriteRole`, {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
@@ -83,7 +93,7 @@ export class HelloCdkStack extends cdk.Stack {
     }
 
     const vpc = new ec2.Vpc(this, `${ID}Vpc`, {
-      maxAzs: 1
+      maxAzs: 1,
     });
 
     new batch.JobQueue(this, `${ID}Queue`, {
