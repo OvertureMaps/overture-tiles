@@ -28,6 +28,6 @@ COPY (
             'sources', sources
         ) AS properties,
         row_number() over () as id,
-    FROM read_parquet('/data/theme=places/type=place/*')
+    FROM read_parquet('$1/theme=places/type=place/*')
 ) TO STDOUT (FORMAT json);
-" | tippecanoe -o $1 --force -J $SCRIPT_DIR/places.filter.json -l place -rg --drop-densest-as-needed --extend-zooms-if-still-dropping --maximum-tile-bytes=2500000 --progress-interval=10
+" | tippecanoe -o $2 --force -J $SCRIPT_DIR/places.filter.json -l place -rg --drop-densest-as-needed --extend-zooms-if-still-dropping --maximum-tile-bytes=2500000 --progress-interval=10

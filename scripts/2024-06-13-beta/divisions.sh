@@ -6,7 +6,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 duckdb -c "
 load spatial;
-load httpfs;
 set s3_region='us-west-2';
 
 COPY ( 
@@ -27,7 +26,7 @@ COPY (
             'sources', sources
         ) AS properties,
         row_number() over () as id
-    FROM read_parquet('/data/theme=divisions/type=boundary/*'))
+    FROM read_parquet('$1/theme=divisions/type=boundary/*'))
     UNION ALL
     (SELECT
     'Feature' AS type,
@@ -56,7 +55,7 @@ COPY (
         'sources', sources
     ) AS properties,
     row_number() over () as id
-FROM read_parquet('/data/theme=divisions/type=division/*'))
+FROM read_parquet('$1/theme=divisions/type=division/*'))
     UNION ALL
     (SELECT
         'Feature' AS type,
@@ -78,7 +77,7 @@ FROM read_parquet('/data/theme=divisions/type=division/*'))
             'sources', sources
         ) AS properties,
         row_number() over () as id
-    FROM read_parquet('/data/theme=divisions/type=division_area/*'))
+    FROM read_parquet('$1/theme=divisions/type=division_area/*'))
     ) TO STDOUT (FORMAT json);
-" | tippecanoe -o $1 -J $SCRIPT_DIR/divisions.filter.json --force --drop-densest-as-needed -z 12 --progress-interval=10
+" | tippecanoe -o $2 -J $SCRIPT_DIR/divisions.filter.json --force --drop-densest-as-needed -z 12 --progress-interval=10
 
