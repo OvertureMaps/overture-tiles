@@ -27,7 +27,9 @@ To create a new tileset for only part of the world, use the `extract` command of
 
 To get all `buildings` tiles around Ghent, Belgium:
 
-`pmtiles extract https://.../buildings.pmtiles`
+```
+pmtiles extract https://.../buildings.pmtiles ghent.pmtiles --bbox=3.660507,51.004250,3.784790,51.065996
+```
 
 ## Building Tilesets
 
@@ -39,7 +41,7 @@ Included is a [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started
 
 #### Requirements
 
-* a [Java Runtime Environment](), version 22+, to build the `base`, `buildings` and `transportation` themes.
+* a [Java Runtime Environment](), version 22+, to build the `base`, `buildings` and `transportation` themes, along with `planetiler.jar` from [onthegomap/planetiler Releases](https://github.com/onthegomap/planetiler/releases).
 * the [felt/tippecanoe](https://github.com/felt/tippecanoe?tab=readme-ov-file#installation) tool and the [DuckDB CLI](https://duckdb.org/docs/installation/) for other themes.
 * the [aws CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) for downloading Overture data.
 
@@ -47,8 +49,22 @@ Included is a [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started
 
 You can build the tilesets from raw data, modifying the `profiles/` and `scripts/`.
 
-1. Copy the Overture Parquet dataset to your local machine to `overture` dir:
-  [Use these docs](https://github.com/OvertureMaps/data/blob/main/README.md#how-to-access-overture-maps-data). You don't need Microsoft Synapse or AWS Athena.
-2. Install DuckDB and [felt/tippecanoe](https://github.com/felt/tippecanoe)
-3. Run [places.sh places.pmtiles](scripts/2024-05-16-beta.0/places.sh) replacing `read_parquet(...)` with the path to your Overture copy. This streams GeoParquet into tippecanoe without any intermediate file.
+* Copy the Overture Parquet dataset to your local machine
+  [using these docs](https://github.com/OvertureMaps/data/blob/main/README.md#how-to-access-overture-maps-data). If you want to only run on a small sample of data, you can use only the first `.parquet` file instead of all in the directory.
 
+* for the `base`, `buildings` and `transportation` themes, generate the tileset with java:
+
+```sh
+# --data indicates where your Overture data is (overture/theme=base/...)
+java -cp planetiler.jar profiles/Base.java --data=overture
+```
+
+The above command outputs `base.pmtiles` in the `data` dir.
+
+* for other themes, run the theme script in `themes/`:
+
+```sh
+scripts/2024-06-13-beta/places.sh overture places.pmtiles
+```
+
+This reads from Overture data in `overture` and writes `places.pmtiles`.
