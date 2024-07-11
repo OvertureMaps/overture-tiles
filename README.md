@@ -6,6 +6,13 @@ These tilesets display an "X-ray" visualization of Overture data, for inspecting
 
 Each Overture **theme** has an associated [PMTiles](https://github.com/protomaps/PMTiles) file.
 
+View these tilesets in your browser:
+* [base](https://pmtiles.io/?url=https%3A%2F%2Fhellocdkstack-overturetilesbucket6f38c611-6zusoghoh4au.s3.us-west-2.amazonaws.com%2F2024-06-13-beta%2Fbase.pmtiles)
+* [buildings](https://pmtiles.io/?url=https%3A%2F%2Fhellocdkstack-overturetilesbucket6f38c611-6zusoghoh4au.s3.us-west-2.amazonaws.com%2F2024-06-13-beta%2Fbuildings.pmtiles)
+* [divisions](https://pmtiles.io/?url=https%3A%2F%2Fhellocdkstack-overturetilesbucket6f38c611-6zusoghoh4au.s3.us-west-2.amazonaws.com%2F2024-06-13-beta%2Fdivisions.pmtiles)
+* [places](https://pmtiles.io/?url=https%3A%2F%2Fhellocdkstack-overturetilesbucket6f38c611-6zusoghoh4au.s3.us-west-2.amazonaws.com%2F2024-06-13-beta%2Fplaces.pmtiles)
+* [transportation](https://pmtiles.io/?url=https%3A%2F%2Fhellocdkstack-overturetilesbucket6f38c611-6zusoghoh4au.s3.us-west-2.amazonaws.com%2F2024-06-13-beta%2Ftransportation.pmtiles)
+
 * S3: `s3://example-bucket/RELEASE/THEME.pmtiles`
 * HTTP: `https://example-bucket.s3.amazonaws.com/RELEASE/THEME.pmtiles`
 
@@ -14,7 +21,13 @@ Each Overture **theme** has an associated [PMTiles](https://github.com/protomaps
 
 ## How to Use
 
-To extract only a part of the tileset, use the [`pmtiles` CLI.](https://github.com/protomaps/go-pmtiles)
+## Accessing only the data you want
+
+To create a new tileset for only part of the world, use the `extract` command of the [`pmtiles` CLI](https://github.com/protomaps/go-pmtiles).
+
+To get all `buildings` tiles around Ghent, Belgium:
+
+`pmtiles extract https://.../buildings.pmtiles`
 
 ## Building Tilesets
 
@@ -27,7 +40,7 @@ Included is a [AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started
 #### Requirements
 
 * a [Java Runtime Environment](), version 22+, to build the `base`, `buildings` and `transportation` themes.
-* the [felt/tippecanoe](https://github.com/felt/tippecanoe) tool and the [DuckDB CLI](https://duckdb.org/docs/installation/) for other themes. See installation
+* the [felt/tippecanoe](https://github.com/felt/tippecanoe?tab=readme-ov-file#installation) tool and the [DuckDB CLI](https://duckdb.org/docs/installation/) for other themes.
 * the [aws CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) for downloading Overture data.
 
 #### Scripts
