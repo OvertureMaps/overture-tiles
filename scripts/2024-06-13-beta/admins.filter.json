@@ -1,0 +1,18 @@
+{
+  "*": [
+    "all", 
+    ["attribute-filter", "id", [">=", "$zoom", 9]],
+    ["attribute-filter", "admin_level", [">=", "$zoom", 9]],
+    ["attribute-filter", "is_maritime", [">=", "$zoom", 9]],
+    ["attribute-filter", "geopol_display", [">=", "$zoom", 9]],
+    ["attribute-filter", "version", [">=", "$zoom", 9]],
+    ["attribute-filter", "update_time", [">=", "$zoom", 9]],
+    ["attribute-filter", "sources", [">=", "$zoom", 9]],
+    ["attribute-filter", "names", [">=", "$zoom", 9]],
+    ["attribute-filter", "locality_type", [">=", "$zoom", 9]],
+    ["attribute-filter", "wikidata", [">=", "$zoom", 9]],
+    ["attribute-filter", "context_id", [">=", "$zoom", 9]],
+    ["attribute-filter", "population", [">=", "$zoom", 9]],
+    ["attribute-filter", "locality_id", [">=", "$zoom", 9]]
+  ]
+}
