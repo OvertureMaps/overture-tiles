@@ -1,5 +1,5 @@
 {
-  "place": [
+  "address": [
     "all", 
     ["attribute-filter", "id", [">=", "$zoom", 14]],
     ["attribute-filter", "street", [">=", "$zoom", 14]],
