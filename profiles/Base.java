@@ -2,7 +2,6 @@ import com.onthegomap.planetiler.FeatureCollector;
 import com.onthegomap.planetiler.config.Arguments;
 import com.onthegomap.planetiler.reader.SourceFeature;
 
-
 public class Base implements OvertureProfile.Theme {
     final static int MAXZOOM = 13;
 
@@ -69,6 +68,7 @@ public class Base implements OvertureProfile.Theme {
             OvertureProfile.addFullTags(source, feature, MAXZOOM);
         }
     }
+
 
     @Override
     public String name() {

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="planetiler">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../planetiler.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../planetiler.jar!/" />
+    </SOURCES>
+  </library>
+</component>
