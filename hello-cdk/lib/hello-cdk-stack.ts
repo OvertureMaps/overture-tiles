@@ -69,6 +69,7 @@ export class HelloCdkStack extends cdk.Stack {
     );
 
     for (let theme of [
+      "addresses",
       "admins",
       "places",
       "divisions",
