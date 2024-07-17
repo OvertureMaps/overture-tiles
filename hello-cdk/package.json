@@ -1,8 +1,8 @@
 {
-  "name": "hello-cdk",
+  "name": "overture-tiles-cdk",
   "version": "0.1.0",
   "bin": {
-    "hello-cdk": "bin/hello-cdk.js"
+    "overture-tiles-cdk": "bin/overture-tiles-cdk.js"
   },
   "scripts": {
     "build": "tsc",
