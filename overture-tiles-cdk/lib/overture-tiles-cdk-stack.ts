@@ -36,6 +36,7 @@ export class OvertureTilesCdkStack extends cdk.Stack {
     });
 
     const bucket = new s3.Bucket(this, `${ID}Bucket`, {
+      bucketName: 'overturemaps-tiles-us-west-2-beta',
       blockPublicAccess: new s3.BlockPublicAccess({
         blockPublicAcls: false,
         blockPublicPolicy: false,
