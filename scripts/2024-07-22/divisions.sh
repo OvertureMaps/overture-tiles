@@ -13,7 +13,7 @@ COPY (
         'Feature' AS type,
         json(st_asgeojson(st_geomfromwkb(geometry))) AS geometry,
         json_object(
-            'layer', 'boundary',
+            'layer', 'division_boundary',
             'minzoom', CASE WHEN subtype = 'country' THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
         ) as tippecanoe,
         json_object(
@@ -25,7 +25,7 @@ COPY (
             'sources', sources
         ) AS properties,
         row_number() over () as id
-    FROM read_parquet('$1/theme=divisions/type=boundary/*'))
+    FROM read_parquet('$1/theme=divisions/type=division_boundary/*'))
     UNION ALL
     (SELECT
     'Feature' AS type,
