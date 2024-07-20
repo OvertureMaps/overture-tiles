@@ -12,7 +12,6 @@
     ["attribute-filter", "brand", [">=", "$zoom", 14]],
     ["attribute-filter", "addresses", [">=", "$zoom", 14]],
     ["attribute-filter", "version", [">=", "$zoom", 14]],
-    ["attribute-filter", "update_time", [">=", "$zoom", 14]],
     ["attribute-filter", "sources", [">=", "$zoom", 14]]
   ]
 }

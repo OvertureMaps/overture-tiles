@@ -24,7 +24,6 @@ COPY (
             'brand', brand,
             'addresses', addresses,
             'version', version,
-            'update_time', update_time,
             'sources', sources
         ) AS properties,
         row_number() over () as id,

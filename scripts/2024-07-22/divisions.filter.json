@@ -4,7 +4,6 @@
     ["attribute-filter", "id", [">=", "$zoom", 9]],
     ["attribute-filter", "divisions", [">=", "$zoom", 9]],
     ["attribute-filter", "version", [">=", "$zoom", 9]],
-    ["attribute-filter", "update_time", [">=", "$zoom", 9]],
     ["attribute-filter", "sources", [">=", "$zoom", 9]],
     ["attribute-filter", "local_type", [">=", "$zoom", 9]],
     ["attribute-filter", "country", [">=", "$zoom", 9]],

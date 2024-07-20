@@ -22,7 +22,6 @@ COPY (
             'class', class,
             'divisions', divisions,
             'version', version,
-            'update_time', update_time,
             'sources', sources
         ) AS properties,
         row_number() over () as id
@@ -51,7 +50,6 @@ COPY (
         'wikidata', wikidata,
         'names', names,
         'version', version,
-        'update_time', update_time,
         'sources', sources
     ) AS properties,
     row_number() over () as id
@@ -73,7 +71,6 @@ FROM read_parquet('$1/theme=divisions/type=division/*'))
             'region', region,
             'names', names,
             'version', version,
-            'update_time', update_time,
             'sources', sources
         ) AS properties,
         row_number() over () as id
