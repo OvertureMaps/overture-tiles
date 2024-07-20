@@ -2,7 +2,7 @@
   "*": [
     "all", 
     ["attribute-filter", "id", [">=", "$zoom", 9]],
-    ["attribute-filter", "divisions", [">=", "$zoom", 9]],
+    ["attribute-filter", "division_ids", [">=", "$zoom", 9]],
     ["attribute-filter", "version", [">=", "$zoom", 9]],
     ["attribute-filter", "sources", [">=", "$zoom", 9]],
     ["attribute-filter", "local_type", [">=", "$zoom", 9]],

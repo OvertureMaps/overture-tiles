@@ -6,7 +6,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 duckdb -c "
 load spatial;
-set s3_region='us-west-2';
 
 COPY ( 
     (SELECT
