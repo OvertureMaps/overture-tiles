@@ -7,7 +7,7 @@ set -x
 BUCKET=$1
 THEME=$2
 
-RELEASE_DATA="2024-06-13-beta.1"
+RELEASE_DATA="2024-07-22.0"
 
 # Trim the patch version: 2024-06-13-beta.1 -> 2024-06-13-beta
 RELEASE_TILESET="${RELEASE_DATA%%.*}"
