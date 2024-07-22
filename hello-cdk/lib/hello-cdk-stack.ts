@@ -50,12 +50,14 @@ export class HelloCdkStack extends cdk.Stack {
         },
       ],
     });
+    bucket.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    new cloudfront.Distribution(this, `${ID}Distribution`, {
+    const distribution = new cloudfront.Distribution(this, `${ID}Distribution`, {
       defaultBehavior: {
         origin: new origins.S3Origin(bucket),
       },
     });
+    distribution.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     const role = new iam.Role(this, `${ID}WriteRole`, {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
