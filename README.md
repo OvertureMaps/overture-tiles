@@ -2,11 +2,12 @@
 
 Create tilesets from [Overture Maps](http://overturemaps.org) data.
 
-These tilesets display an "X-ray" visualization of Overture data, for inspecting the breadth of Overture data and attributes. **They are not designed to be a production-ready cartographic basemap.**
+These tilesets display an ["X-ray" visualization of Overture data](https://explore.overturemaps.org), for inspecting the breadth of Overture data and attributes. **They are not designed to be a production-ready cartographic basemap.**
 
 Each Overture **theme** has an associated [PMTiles](https://github.com/protomaps/PMTiles) file.
 
 View these tilesets in your browser:
+* [addresses](https://pmtiles.io/?url=https%3A%2F%2Foverturemaps-tiles-us-west-2-beta.s3.amazonaws.com%2F2024-07-22%2Faddresses.pmtiles)
 * [base](https://pmtiles.io/?url=https%3A%2F%2Foverturemaps-tiles-us-west-2-beta.s3.amazonaws.com%2F2024-07-22%2Fbase.pmtiles)
 * [buildings](https://pmtiles.io/?url=https%3A%2F%2Foverturemaps-tiles-us-west-2-beta.s3.amazonaws.com%2F2024-07-22%2Fbuildings.pmtiles)
 * [divisions](https://pmtiles.io/?url=https%3A%2F%2Foverturemaps-tiles-us-west-2-beta.s3.amazonaws.com%2F2024-07-22%2Fdivisions.pmtiles)
@@ -16,7 +17,7 @@ View these tilesets in your browser:
 * S3: `s3://overturemaps-tiles-us-west-2-beta/RELEASE/THEME.pmtiles`
 * HTTP: `https://overturemaps-tiles-us-west-2-beta.s3.amazonaws.com/RELEASE/THEME.pmtiles`
 
-* `THEME`: one of `base`, `buildings`, `divisions`, `places`, `transportation`
+* `THEME`: one of `addresses`, `base`, `buildings`, `divisions`, `places`, `transportation`
 * `RELEASE`: The Overture release name, not including minor version. For example, theme `buildings`  in **data** release `2024-07-22.0` will have tiles object name `2024-07-22/buildings.pmtiles`.
 
 ## How to Use
