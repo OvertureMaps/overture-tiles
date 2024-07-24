@@ -12,6 +12,31 @@ public class Buildings implements OvertureProfile.Theme {
         var polygon = features.polygon(layer);
 
         if (source instanceof ParquetFeature pf) {
+            var sources = pf.getStruct("sources").asList();
+
+            // set @height_source helper
+            sources.stream().filter(s -> s.get("property").asString().equals("properties/height")).findFirst().ifPresentOrElse(
+                    s -> polygon.setAttr("@height_source", s.get("dataset")),
+                    () -> {
+                        if (pf.hasTag("height")) {
+                            sources.stream().filter(s -> s.get("property").asString().isEmpty()).findFirst().ifPresent(
+                                    s -> polygon.setAttr("@height_source", s.get("dataset"))
+                            );
+                        }
+                    }
+            );
+
+            // set @geometry_source helper
+            sources.stream().filter(s -> s.get("property").asString().equals("properties/geometry")).findFirst().ifPresentOrElse(
+                    s -> polygon.setAttr("@geometry_source", s.get("dataset")),
+                    () -> {
+                        sources.stream().filter(s -> s.get("property").asString().isEmpty()).findFirst().ifPresent(
+                                s -> polygon.setAttr("@geometry_source", s.get("dataset"))
+                        );
+                    }
+            );
+
+            // deprecate me: @source_0_dataset
             var source0Dataset = pf.getStruct("sources").get(0).get("dataset");
             polygon.setAttr("@source_0_dataset", source0Dataset);
         }
