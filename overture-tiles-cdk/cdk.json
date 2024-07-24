@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/hello-cdk.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/overture-tiles-cdk.ts",
   "watch": {
     "include": [
       "**"

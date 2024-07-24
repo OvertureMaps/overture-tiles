@@ -10,7 +10,7 @@ import { aws_iam as iam } from "aws-cdk-lib";
 
 const ID = "OvertureTiles";
 
-export class HelloCdkStack extends cdk.Stack {
+export class OvertureTilesCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
@@ -36,6 +36,7 @@ export class HelloCdkStack extends cdk.Stack {
     });
 
     const bucket = new s3.Bucket(this, `${ID}Bucket`, {
+      bucketName: 'overturemaps-tiles-us-west-2-beta',
       blockPublicAccess: new s3.BlockPublicAccess({
         blockPublicAcls: false,
         blockPublicPolicy: false,
