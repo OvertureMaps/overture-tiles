@@ -13,7 +13,7 @@ COPY (
         json(st_asgeojson(st_geomfromwkb(geometry))) AS geometry,
         json_object(
             'layer', 'division_boundary',
-            'minzoom', CASE WHEN subtype = 'country' THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
+            'minzoom', CASE WHEN (subtype = 'country' OR subtype = 'dependency') THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
         ) as tippecanoe,
         json_object(
             'id', id,
@@ -31,7 +31,7 @@ COPY (
     json(st_asgeojson(st_geomfromwkb(geometry))) AS geometry,
     json_object(
         'layer', 'division',
-        'minzoom', CASE WHEN subtype = 'country' THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
+        'minzoom', CASE WHEN (subtype = 'country' OR subtype = 'dependency') THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
     ) as tippecanoe,
     json_object(
         'id', id,
@@ -59,7 +59,7 @@ FROM read_parquet('$1/theme=divisions/type=division/*'))
         json(st_asgeojson(st_geomfromwkb(geometry))) AS geometry,
         json_object(
             'layer', 'division_area',
-            'minzoom', CASE WHEN subtype = 'country' THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
+            'minzoom', CASE WHEN (subtype = 'country' OR subtype = 'dependency') THEN 0 WHEN subtype = 'region' THEN 4 WHEN subtype = 'county' THEN 8 ELSE 10 END
         ) as tippecanoe,
         json_object(
             'id', id,
