@@ -1,8 +1,6 @@
-# Welcome to your CDK TypeScript project
+# Overture Tiles CDK
 
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+Overture Tiles CDK creates the AWS infrastructure for generating tiles from Overture data.
 
 ## Useful commands
 
@@ -11,3 +9,20 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `npx cdk deploy`  deploy this stack to your default AWS account/region
 * `npx cdk diff`    compare deployed stack with current state
 * `npx cdk synth`   emits the synthesized CloudFormation template
+
+## Prerequisites
+- [AWS CLI](https://docs.aws.amazon.com/cli/)
+- [AWS CDK](https://aws.amazon.com/cdk/)
+  - `npm install -g aws-cdk`
+
+## Deploying
+- Update configuration in `/lib/config.ts`
+- `npm run cdk bootstrap`
+- `npm run cdk deploy`
+
+## Tile generation
+- Open the [AWS Batch Jobs console](console.aws.amazon.com/batch/home#jobs)
+- Click `Submit new job`
+- Select from the available Job Definitions. Each definition is associated with a version and theme from a past Overture release.
+- Select the OvertureTilesQueue as the Job queue.
+- Submit the job. Once it is complete, it will be available at `s3://IMAGE_NAME/RELEASE/THEME.pmtiles`
