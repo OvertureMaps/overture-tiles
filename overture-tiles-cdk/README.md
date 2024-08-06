@@ -16,7 +16,7 @@ Overture Tiles CDK creates the AWS infrastructure for generating tiles from Over
   - `npm install -g aws-cdk`
 
 ## Deploying
-- Update configuration in `/lib/config.ts`
+- Update configuration in `bin/overture-tiles-cdk.ts`
 - `npm run cdk bootstrap`
 - `npm run cdk deploy`
 
@@ -25,4 +25,4 @@ Overture Tiles CDK creates the AWS infrastructure for generating tiles from Over
 - Click `Submit new job`
 - Select from the available Job Definitions. Each definition is associated with a version and theme from a past Overture release.
 - Select the OvertureTilesQueue as the Job queue.
-- Submit the job. Once it is complete, it will be available at `s3://IMAGE_NAME/RELEASE/THEME.pmtiles`
+- Submit the job. Once it is complete, it will be available at `s3://BUCKET_NAME/RELEASE/THEME.pmtiles`
