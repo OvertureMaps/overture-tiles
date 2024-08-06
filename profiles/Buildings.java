@@ -35,10 +35,6 @@ public class Buildings implements OvertureProfile.Theme {
                         );
                     }
             );
-
-            // deprecate me: @source_0_dataset
-            var source0Dataset = pf.getStruct("sources").get(0).get("dataset");
-            polygon.setAttr("@source_0_dataset", source0Dataset);
         }
 
         OvertureProfile.addFullTags(source, polygon, 14);

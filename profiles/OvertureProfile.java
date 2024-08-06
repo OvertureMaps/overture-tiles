@@ -32,8 +32,11 @@ public class OvertureProfile implements Profile {
                 if (!pf.hasTag(name)) continue;
                 if (name.equals("bbox") || name.equals("geometry")) continue;
                 if (name.equals("names")) {
-                    var primaryName = pf.getStruct("names").get("primary");
-                    feature.setAttrWithMinSize("@name", primaryName, 16, 0, minZoomToShowAlways);
+                    var names = pf.getStruct("names");
+                    if (names.get("rules").isNull() || (names.get("rules").asList().size() == 1 && names.get("rules").get(0).get("between").isNull())) {
+                        var primaryName = pf.getStruct("names").get("primary");
+                        feature.setAttrWithMinSize("@name", primaryName, 16, 0, minZoomToShowAlways);
+                    }
                 }
                 if (field.isPrimitive()) {
                     feature.inheritAttrFromSource(name);
