@@ -7,13 +7,13 @@ import {
 } from "aws-cdk-lib";
 import { aws_batch as batch, aws_ecs as ecs } from "aws-cdk-lib";
 import { aws_iam as iam } from "aws-cdk-lib";
+import { aws_ecr as ecr } from "aws-cdk-lib";
 
 const ID = "OvertureTiles";
 
 export type OvertureTilesCdkStackProps = cdk.StackProps & {
-  imageName: string;
   bucketName: string;
-}
+};
 
 export class OvertureTilesCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: OvertureTilesCdkStackProps) {
@@ -58,14 +58,20 @@ export class OvertureTilesCdkStack extends cdk.Stack {
     });
     bucket.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    const distribution = new cloudfront.Distribution(this, `${ID}Distribution`, {
-      defaultBehavior: {
-        origin: new origins.S3Origin(bucket),
+    const distribution = new cloudfront.Distribution(
+      this,
+      `${ID}Distribution`,
+      {
+        defaultBehavior: {
+          origin: new origins.S3Origin(bucket),
+        },
       },
-    });
+    );
     distribution.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    const role = new iam.Role(this, `${ID}WriteRole`, {
+    const repository = new ecr.Repository(this, `${ID}Repository`);
+
+    const role = new iam.Role(this, `${ID}JobRole`, {
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
     });
 
@@ -91,12 +97,12 @@ export class OvertureTilesCdkStack extends cdk.Stack {
           `${ID}Container_${theme}`,
           {
             image: ecs.ContainerImage.fromRegistry(
-             props.imageName,
+              `${repository.repositoryUri}:latest`,
             ),
             memory: cdk.Size.gibibytes(60),
             cpu: 30,
             command: [bucket.bucketName, theme],
-            jobRole: role,
+            jobRole: role
           },
         ),
       });
