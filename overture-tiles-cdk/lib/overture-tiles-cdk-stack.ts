@@ -10,8 +10,13 @@ import { aws_iam as iam } from "aws-cdk-lib";
 
 const ID = "OvertureTiles";
 
+export type OvertureTilesCdkStackProps = cdk.StackProps & {
+  imageName: string;
+  bucketName: string;
+}
+
 export class OvertureTilesCdkStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: OvertureTilesCdkStackProps) {
     super(scope, id, props);
 
     const userData = ec2.UserData.forLinux();
@@ -36,7 +41,7 @@ export class OvertureTilesCdkStack extends cdk.Stack {
     });
 
     const bucket = new s3.Bucket(this, `${ID}Bucket`, {
-      bucketName: 'overturemaps-tiles-us-west-2-beta',
+      bucketName: props.bucketName,
       blockPublicAccess: new s3.BlockPublicAccess({
         blockPublicAcls: false,
         blockPublicPolicy: false,
@@ -86,7 +91,7 @@ export class OvertureTilesCdkStack extends cdk.Stack {
           `${ID}Container_${theme}`,
           {
             image: ecs.ContainerImage.fromRegistry(
-              "protomaps/overture-tiles:latest",
+             props.imageName,
             ),
             memory: cdk.Size.gibibytes(60),
             cpu: 30,

@@ -1,10 +1,20 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { OvertureTilesCdkStack } from '../lib/overture-tiles-cdk-stack';
+import {
+  OvertureTilesCdkStack,
+  OvertureTilesCdkStackProps
+} from '../lib/overture-tiles-cdk-stack';
+
+const props: OvertureTilesCdkStackProps = {
+  bucketName: 'overturemaps-tiles-us-west-2-beta',
+  imageName: 'protomaps/overture-tiles:latest',
+}
 
 const app = new cdk.App();
 new OvertureTilesCdkStack(app, 'OvertureTilesCdkStack', {
+  ...props,
+
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
