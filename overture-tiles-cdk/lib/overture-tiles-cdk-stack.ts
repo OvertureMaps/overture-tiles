@@ -82,6 +82,25 @@ export class OvertureTilesCdkStack extends cdk.Stack {
       }),
     );
 
+    const executionRole = new iam.Role(this, `${ID}ExecutionRole`, {
+      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+    });
+
+    executionRole.addToPolicy(
+      new iam.PolicyStatement({
+        actions: [
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "sts:AssumeRole"
+        ],
+        resources: ["*"],
+      }),
+    );
+
+    executionRole.addManagedPolicy(
+      iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonEC2ContainerRegistryReadOnly')
+    );
+
     for (let theme of [
       "addresses",
       "admins",
@@ -102,7 +121,8 @@ export class OvertureTilesCdkStack extends cdk.Stack {
             memory: cdk.Size.gibibytes(60),
             cpu: 30,
             command: [bucket.bucketName, theme],
-            jobRole: role
+            jobRole: role,
+            executionRole: executionRole
           },
         ),
       });
