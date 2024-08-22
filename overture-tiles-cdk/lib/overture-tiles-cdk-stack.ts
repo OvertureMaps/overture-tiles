@@ -120,7 +120,6 @@ export class OvertureTilesCdkStack extends cdk.Stack {
             ),
             memory: cdk.Size.gibibytes(60),
             cpu: 30,
-            command: [bucket.bucketName, theme],
             jobRole: role,
             executionRole: executionRole
           },
