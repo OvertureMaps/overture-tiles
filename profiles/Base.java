@@ -36,9 +36,10 @@ public class Base implements OvertureProfile.Theme {
             OvertureProfile.addFullTags(source, feature, MAXZOOM);
         } else if (layer.equals("land_cover")) {
             var cartography = source.getStruct("cartography");
+            var minZoom = cartography.get("min_zoom").asInt();
             feature.setMaxZoom(cartography.get("max_zoom").asInt());
-            feature.setMinZoom(cartography.get("min_zoom").asInt());
-            OvertureProfile.addFullTags(source, feature, MAXZOOM);
+            feature.setMinZoom(minZoom);
+            OvertureProfile.addFullTags(source, feature, minZoom);
         } else if (layer.equals("water")) {
             int minzoom = 13;
             if (source.isPoint()) {
