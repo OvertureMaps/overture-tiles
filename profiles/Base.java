@@ -25,6 +25,10 @@ public class Base implements OvertureProfile.Theme {
             }
             feature.setMinZoom(minzoom);
             OvertureProfile.addFullTags(source, feature, MAXZOOM);
+        } else if (layer.equals("bathymetry")) {
+            feature.setMinPixelSize(0);
+            feature.setMinZoom(0);
+            OvertureProfile.addFullTags(source, feature, MAXZOOM);
         } else if (layer.equals("land_use")) {
             int minzoom = 9;
             if (source.isPoint()) {
