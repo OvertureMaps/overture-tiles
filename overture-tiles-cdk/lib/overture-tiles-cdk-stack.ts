@@ -9,7 +9,7 @@ import { aws_batch as batch, aws_ecs as ecs } from "aws-cdk-lib";
 import { aws_iam as iam } from "aws-cdk-lib";
 import { aws_ecr as ecr } from "aws-cdk-lib";
 
-const ID = "OvertureTiles";
+const ID = "OvertureQATiles";
 
 export type OvertureTilesCdkStackProps = cdk.StackProps & {
   bucketName: string;
@@ -147,7 +147,7 @@ export class OvertureTilesCdkStack extends cdk.Stack {
               instanceTypes: [
                 ec2.InstanceType.of(
                   ec2.InstanceClass.C7GD,
-                  ec2.InstanceSize.XLARGE8,
+                  ec2.InstanceSize.XLARGE16,
                 ),
               ],
               useOptimalInstanceClasses: false,

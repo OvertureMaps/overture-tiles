@@ -7,7 +7,7 @@ import {
 } from '../lib/overture-tiles-cdk-stack';
 
 const props: OvertureTilesCdkStackProps = {
-  bucketName: 'overturemaps-tiles-us-west-2-beta'
+  bucketName: 'overturemaps-qa-tiles'
 }
 
 const app = new cdk.App();
