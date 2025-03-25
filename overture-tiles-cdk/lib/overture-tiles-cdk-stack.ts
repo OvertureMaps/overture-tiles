@@ -77,8 +77,8 @@ export class OvertureTilesCdkStack extends cdk.Stack {
 
     role.addToPolicy(
       new iam.PolicyStatement({
-        actions: ["s3:PutObject", "s3:PutObjectAcl"],
-        resources: [`${bucket.bucketArn}/*`],
+        actions: ["s3:PutObject", "s3:PutObjectAcl", "s3:DeleteObject", "s3:GetBucketLocation", "s3:ListBucket", "s3:GetObject"],
+        resources: [`${bucket.bucketArn}/*`, `${bucket.bucketArn}`],
       }),
     );
 
