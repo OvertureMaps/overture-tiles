@@ -16,7 +16,7 @@ SCRIPTS_VERSION="2024-07-22"
 RELEASE_TILESET="${RELEASE_DATA%%.*}"
 
 # Download the full theme to /data.
-aws s3 sync --no-progress --region us-west-2 --no-sign-request s3://$SRC_BUCKET_FOLDER/ /data/theme=$THEME
+aws s3 sync --no-progress --region us-west-2 s3://$SRC_BUCKET_FOLDER/ /data/theme=$THEME
 
 # Tile and upload the theme to the target bucket.
 if [ "$THEME" == "admins" ] || [ "$THEME" == "places" ] || [ "$THEME" == "divisions" ]; then
