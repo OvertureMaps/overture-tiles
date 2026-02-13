@@ -3,12 +3,14 @@ name: Build and Push Docker Image
 on:
   release:
     types: [published]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:
   build-and-push:
     name: Build and push Docker image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
 
     permissions:
       contents: read
@@ -49,7 +51,7 @@ jobs:
         with:
           context: .
           platforms: linux/arm64
-          push: true
+          #push: true
           tags: |
             ghcr.io/${{ steps.lowercase.outputs.repository }}:latest
             ghcr.io/${{ steps.lowercase.outputs.repository }}:${{ steps.version.outputs.version }}
