@@ -54,6 +54,6 @@ jobs:
           #push: true
           tags: |
             ghcr.io/${{ steps.lowercase.outputs.repository }}:latest
-            ghcr.io/${{ steps.lowercase.outputs.repository }}:${{ steps.version.outputs.version }}
+            ghcr.io/${{ steps.lowercase.outputs.repository }}:xx
           cache-from: type=gha
           cache-to: type=gha,mode=max
