@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1.7
-FROM amazoncorretto:22
+# Java 22+ is required: run.sh uses multi-file source launch (JEP 458) for profiles/*.java
+FROM amazoncorretto:25-al2023
 
 ARG TARGETARCH
 ARG DUCKDB_VERSION=1.5.1
