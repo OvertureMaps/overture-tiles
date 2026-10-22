@@ -12,7 +12,11 @@ LABEL org.opencontainers.image.title="overture-tiles"
 
 ENV TILES_VERSION=${TILES_VERSION}
 
-RUN dnf upgrade -y ca-certificates && dnf install -y gzip tar unzip && dnf clean all && \
+# Explicitly distrusted roots; update-ca-trust propagates them to the system bundle and Java cacerts
+COPY certs/blocklist/ /etc/pki/ca-trust/source/blocklist/
+
+RUN dnf upgrade -y ca-certificates && update-ca-trust extract && \
+    dnf install -y gzip tar unzip && dnf clean all && \
     \
     # Install s5cmd for S3 operations (parallel transfers; prefer over AWS CLI for data movement)
     S5CMD_ARCH=$([ "${TARGETARCH}" = "arm64" ] && echo "Linux-arm64" || echo "Linux-64bit") && \
