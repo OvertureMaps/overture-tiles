@@ -2,6 +2,6 @@
 * @overturemaps/omf-public-reviewers
 
 # Devops
-/.github/** @lowlydba @overturemaps/omf-public-reviewers
+/.github/** @lowlydba @overturemaps/omf-public-reviewers @OvertureMaps/overture-devops-reviewers
 **/package.json @lowlydba @overturemaps/omf-public-reviewers
 **/package-lock.json @lowlydba @overturemaps/omf-public-reviewers
